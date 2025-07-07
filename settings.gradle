@@ -1,2 +1,3 @@
 rootProject.name = 'chess'
-include ':core'
+include 'core'
+include 'server'

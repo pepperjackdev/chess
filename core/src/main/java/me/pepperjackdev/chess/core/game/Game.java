@@ -27,12 +27,7 @@ public class Game {
     }
 
     public void action(Action action) {
-        if (isOngoing()) {
-            switch (action) {
-                case MoveAction moveAction -> move(moveAction);
-                case DrawAction _ -> draw();
-            }
-        }
+        draw();
     }
 
     private void move(MoveAction moveAction) {
@@ -41,6 +36,6 @@ public class Game {
 
     private void draw() {
         data.setResult(Result.DRAW);
-        System.out.println("Draw!"); // TODO: I'm not supposed to be here...
+        System.out.println("Draw!");
     }
 }
