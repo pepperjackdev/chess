@@ -3,7 +3,7 @@ package me.pepperjackdev.chess.core.game.data.state;
 import me.pepperjackdev.chess.core.game.data.state.castling.MutableCastingRights;
 import me.pepperjackdev.chess.core.game.data.state.placement.MutablePlacement;
 import me.pepperjackdev.chess.core.game.position.Position;
-import me.pepperjackdev.chess.game.Side;
+import me.pepperjackdev.chess.core.game.Side;
 
 public class MutableState
     implements State {

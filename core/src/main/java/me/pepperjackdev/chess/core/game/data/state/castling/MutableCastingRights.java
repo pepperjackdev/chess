@@ -22,7 +22,7 @@ public class MutableCastingRights
         this(allCanCastle, allCanCastle, allCanCastle, allCanCastle);
     }
 
-    public boolean canBlackCastleKingSide() {
+    public boolean getBlackCanCastleKingSide() {
         return blackCanCastleKingSide;
     }
 
@@ -30,7 +30,7 @@ public class MutableCastingRights
         this.blackCanCastleKingSide = blackCanCastleKingSide;
     }
 
-    public boolean canBlackCastleQueenSide() {
+    public boolean getBlackCanCastleQueenSide() {
         return blackCanCastleQueenSide;
     }
 
@@ -38,7 +38,7 @@ public class MutableCastingRights
         this.blackCanCastleQueenSide = blackCanCastleQueenSide;
     }
 
-    public boolean canWhiteCastleKingSide() {
+    public boolean getWhiteCanCastleKingSide() {
         return whiteCanCastleKingSide;
     }
 
@@ -46,7 +46,7 @@ public class MutableCastingRights
         this.whiteCanCastleKingSide = whiteCanCastleKingSide;
     }
 
-    public boolean canWhiteCastleQueenSide() {
+    public boolean getWhiteCanCastleQueenSide() {
         return whiteCanCastleQueenSide;
     }
 

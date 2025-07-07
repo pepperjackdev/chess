@@ -27,7 +27,12 @@ public class Game {
     }
 
     public void action(Action action) {
-        draw();
+        if (isOngoing()) {
+            switch (action) {
+                case DrawAction _ -> draw();
+                case MoveAction moveAction -> move(moveAction);
+            }
+        }
     }
 
     private void move(MoveAction moveAction) {
