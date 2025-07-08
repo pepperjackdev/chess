@@ -1,6 +1,6 @@
-package me.pepperjackdev.chess.core.game.data;
+package me.pepperjackdev.chess.core.data;
 
-import me.pepperjackdev.chess.core.game.data.state.MutableState;
+import me.pepperjackdev.chess.core.data.state.MutableState;
 
 import java.util.Optional;
 

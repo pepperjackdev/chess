@@ -1,4 +1,4 @@
-package me.pepperjackdev.chess.core.game;
+package me.pepperjackdev.chess.core;
 
 public enum Side {
     WHITE,

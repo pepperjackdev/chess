@@ -1,13 +1,14 @@
 package me.pepperjackdev.chess.server.game;
 
-import me.pepperjackdev.chess.core.game.Game;
-import me.pepperjackdev.chess.core.game.Side;
-import me.pepperjackdev.chess.core.game.data.Data;
-import me.pepperjackdev.chess.core.game.data.MutableData;
-import me.pepperjackdev.chess.core.game.data.state.MutableState;
-import me.pepperjackdev.chess.core.game.data.state.castling.MutableCastingRights;
-import me.pepperjackdev.chess.core.game.data.state.placement.MutablePlacement;
-import me.pepperjackdev.chess.core.game.data.state.placement.Size;
+import me.pepperjackdev.chess.core.Game;
+import me.pepperjackdev.chess.core.Side;
+import me.pepperjackdev.chess.core.data.Data;
+import me.pepperjackdev.chess.core.data.MutableData;
+import me.pepperjackdev.chess.core.data.state.MutableState;
+import me.pepperjackdev.chess.core.data.state.castling.MutableCastingRights;
+import me.pepperjackdev.chess.core.data.state.placement.MutablePlacement;
+import me.pepperjackdev.chess.core.data.state.placement.Size;
+import me.pepperjackdev.chess.server.action.ActionDTO;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,5 +28,9 @@ public class GameService {
 
     public Data getData() {
         return game.getData();
+    }
+
+    public void action(ActionDTO dto) {
+        game.action(dto.toAction());
     }
 }

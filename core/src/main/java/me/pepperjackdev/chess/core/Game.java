@@ -1,11 +1,11 @@
-package me.pepperjackdev.chess.core.game;
+package me.pepperjackdev.chess.core;
 
-import me.pepperjackdev.chess.core.game.action.Action;
-import me.pepperjackdev.chess.core.game.action.DrawAction;
-import me.pepperjackdev.chess.core.game.data.Data;
-import me.pepperjackdev.chess.core.game.data.MutableData;
-import me.pepperjackdev.chess.core.game.action.MoveAction;
-import me.pepperjackdev.chess.core.game.data.Result;
+import me.pepperjackdev.chess.core.action.Action;
+import me.pepperjackdev.chess.core.action.DrawAction;
+import me.pepperjackdev.chess.core.data.Data;
+import me.pepperjackdev.chess.core.data.MutableData;
+import me.pepperjackdev.chess.core.action.MoveAction;
+import me.pepperjackdev.chess.core.data.Result;
 
 public class Game {
     private final MutableData data;
@@ -19,7 +19,7 @@ public class Game {
     }
 
     public boolean isOngoing() {
-        return data.getResult().isPresent();
+        return data.getResult().isEmpty();
     }
 
     public boolean isFinished() {
@@ -41,6 +41,5 @@ public class Game {
 
     private void draw() {
         data.setResult(Result.DRAW);
-        System.out.println("Draw!");
     }
 }

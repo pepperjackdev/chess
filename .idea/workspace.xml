@@ -65,6 +65,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Enum" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -98,54 +100,54 @@
     <option name="sortByType" value="true" />
     <option name="sortKey" value="BY_TYPE" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Gradle.Build chess.executor": "Run",
-    "Gradle.Run Server.executor": "Run",
-    "Gradle.chess [:me.pepperjackdev.chess.Main.main()].executor": "Run",
-    "Gradle.chess:core [build].executor": "Run",
-    "Gradle.chess:server [bootRun].executor": "Run",
-    "Gradle.chess:server [build].executor": "Run",
-    "Gradle.game_of_chess [:me.pepperjackdev.chess.Main.main()].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.ServerApplication.executor": "Run",
-    "Spring Boot.Unnamed.executor": "Run",
-    "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "jdk.selected.JDK": "23",
-    "jdk.selected.com.intellij.ui.dsl.builder.impl.RowImpl.sdk": "23",
-    "last_opened_file_path": "C:/Dev/projects/chess",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "onboarding.tips.debug.path": "C:/Dev/projects/game_of_chess/src/main/java/me/pepperjackdev/chess/Main.java",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.20605469",
-    "project.structure.side.proportion": "0.4632184",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Gradle.Build chess.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Run Server.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.chess [:me.pepperjackdev.chess.Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.chess:core [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.chess:server [bootRun].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.chess:server [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.game_of_chess [:me.pepperjackdev.chess.Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Spring Boot.ServerApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.Unnamed.executor&quot;: &quot;Run&quot;,
+    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;jdk.selected.JDK&quot;: &quot;23&quot;,
+    &quot;jdk.selected.com.intellij.ui.dsl.builder.impl.RowImpl.sdk&quot;: &quot;23&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Dev/projects/chess&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Dev/projects/game_of_chess/src/main/java/me/pepperjackdev/chess/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.20605469&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.4632184&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "GitStage.ChangesTree.GroupingKeys": [
-      "directory",
-      "module",
-      "repository"
+  &quot;keyToStringList&quot;: {
+    &quot;GitStage.ChangesTree.GroupingKeys&quot;: [
+      &quot;directory&quot;,
+      &quot;module&quot;,
+      &quot;repository&quot;
     ],
-    "jdk.preference.JDK": [
-      "23=C:/Program Files/Java/jdk-23"
+    &quot;jdk.preference.JDK&quot;: [
+      &quot;23=C:/Program Files/Java/jdk-23&quot;
     ],
-    "jdk.preference.com.intellij.ui.dsl.builder.impl.RowImpl.sdk": [
-      "23=C:/Program Files/Java/jdk-23"
+    &quot;jdk.preference.com.intellij.ui.dsl.builder.impl.RowImpl.sdk&quot;: [
+      &quot;23=C:/Program Files/Java/jdk-23&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Dev\projects\chess" />
@@ -206,7 +208,9 @@
       <workItem from="1751896475184" duration="2015000" />
       <workItem from="1751907684364" duration="930000" />
       <workItem from="1751908637263" duration="1495000" />
-      <workItem from="1751910279580" duration="2670000" />
+      <workItem from="1751910279580" duration="3224000" />
+      <workItem from="1751972962799" duration="570000" />
+      <workItem from="1751995266973" duration="2116000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <option name="closed" value="true" />
@@ -232,7 +236,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751898542075</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Created the `server` springboot module">
+      <option name="closed" value="true" />
+      <created>1751914908609</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1751914908609</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -253,6 +265,7 @@
     <MESSAGE value="Initial commit" />
     <MESSAGE value="Created core and server modules" />
     <MESSAGE value="Deleted server module" />
-    <option name="LAST_COMMIT_MESSAGE" value="Deleted server module" />
+    <MESSAGE value="Created the `server` springboot module" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created the `server` springboot module" />
   </component>
 </project>

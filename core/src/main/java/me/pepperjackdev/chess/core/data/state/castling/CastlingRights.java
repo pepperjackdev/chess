@@ -1,4 +1,4 @@
-package me.pepperjackdev.chess.core.game.data.state.castling;
+package me.pepperjackdev.chess.core.data.state.castling;
 
 public interface CastlingRights {
     boolean getWhiteCanCastleKingSide();

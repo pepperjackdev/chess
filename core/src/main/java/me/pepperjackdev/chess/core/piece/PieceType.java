@@ -1,4 +1,4 @@
-package me.pepperjackdev.chess.core.game.piece;
+package me.pepperjackdev.chess.core.piece;
 
 public enum PieceType {
     PAWN,

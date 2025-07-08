@@ -1,10 +1,8 @@
 package me.pepperjackdev.chess.server.game;
 
-import me.pepperjackdev.chess.core.game.Game;
-import me.pepperjackdev.chess.core.game.data.Data;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import me.pepperjackdev.chess.core.data.Data;
+import me.pepperjackdev.chess.server.action.ActionDTO;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/game")
@@ -18,5 +16,10 @@ public class GameController {
     @GetMapping
     public Data getData() {
         return service.getData();
+    }
+
+    @PostMapping
+    public void action(@RequestBody ActionDTO dto) {
+        service.action(dto);
     }
 }
