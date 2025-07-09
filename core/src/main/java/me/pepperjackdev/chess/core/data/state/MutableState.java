@@ -8,20 +8,20 @@ import me.pepperjackdev.chess.core.Side;
 public class MutableState
     implements State {
 
-    private final MutablePlacement piecePlacementData;
+    private final MutablePlacement placement;
     private Side activeColor;
     private final MutableCastingRights castlingRights;
     private Position enPassantTargetSquare;
     private int halfMoveClock;
     private int fullMoveClock;
 
-    public MutableState(MutablePlacement piecePlacementData,
+    public MutableState(MutablePlacement placement,
                         Side activeColor,
                         MutableCastingRights castlingRights,
                         Position enPassantTargetSquare,
                         int halfMoveClock,
                         int fullMoveClock) {
-        this.piecePlacementData = piecePlacementData;
+        this.placement = placement;
         this.activeColor = activeColor;
         this.castlingRights = castlingRights;
         this.enPassantTargetSquare = enPassantTargetSquare;
@@ -30,8 +30,8 @@ public class MutableState
     }
 
     @Override
-    public MutablePlacement getPiecePlacementData() {
-        return piecePlacementData;
+    public MutablePlacement getPlacement() {
+        return placement;
     }
 
     @Override

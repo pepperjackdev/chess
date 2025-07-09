@@ -6,7 +6,7 @@ import me.pepperjackdev.chess.core.data.state.castling.CastlingRights;
 import me.pepperjackdev.chess.core.data.state.placement.Placement;
 
 public interface State {
-    Placement getPiecePlacementData();
+    Placement getPlacement();
     Side getActiveColor();
     CastlingRights getCastlingRights();
     Position getEnPassantTargetSquare();
