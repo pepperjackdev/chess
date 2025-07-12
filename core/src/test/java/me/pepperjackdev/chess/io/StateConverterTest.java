@@ -21,7 +21,7 @@ class StateConverterTest {
             1
     );
 
-    private static final String standardGameStartFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    private static final String standardGameStartFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     @Test
     void serializeStandardGameStartState() {
@@ -29,7 +29,7 @@ class StateConverterTest {
         String result = StateConverter.serialize(standardGameStartState);
 
         // then
-        assertEquals("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", result);
+        assertEquals(standardGameStartFEN, result);
     }
 
     @Test

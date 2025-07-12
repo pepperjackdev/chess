@@ -4,10 +4,10 @@ import me.pepperjackdev.chess.core.data.state.State;
 
 public class StateConverter {
     public static String serialize(State state) {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public static State deserialize(String fen) {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
