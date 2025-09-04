@@ -4,11 +4,46 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f55f408b-e072-4a3c-a84e-3c93f54a05f0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/io/PlacementConverter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/io/StateConverter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/test/java/me/pepperjackdev/chess/io/PlacementConverterTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/test/java/me/pepperjackdev/chess/io/StateConverterTest.java" beforeDir="false" />
+    <list default="true" id="f55f408b-e072-4a3c-a84e-3c93f54a05f0" name="Changes" comment="Code refactor">
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/Game.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/Side.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/action/Action.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/action/DrawAction.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/action/MoveAction.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/data/Data.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/data/MutableData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/data/Result.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/data/state/MutableState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/data/state/State.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/data/state/castling/CastlingRights.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/data/state/castling/MutableCastingRights.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/data/state/placement/MutablePlacement.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/data/state/placement/Placement.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/data/state/placement/Size.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/move/Move.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/piece/Bishop.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/piece/King.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/piece/Knight.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/piece/Pawn.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/piece/Piece.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/piece/Queen.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/piece/Rook.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/me/pepperjackdev/chess/core/position/Position.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/me/pepperjackdev/chess/server/JacksonConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/me/pepperjackdev/chess/server/ServerApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/me/pepperjackdev/chess/server/action/ActionDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/me/pepperjackdev/chess/server/action/DrawActionDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/me/pepperjackdev/chess/server/game/GameController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/me/pepperjackdev/chess/server/game/GameService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/me/pepperjackdev/chess/server/state/StateDeserializer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/me/pepperjackdev/chess/server/state/StateSerializer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/test/java/me/pepperjackdev/chess/server/ServerApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,6 +52,9 @@
   </component>
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/client">
       <ProjectState />
     </projectState>
     <projectState path="$PROJECT_DIR$/server">
@@ -89,7 +127,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/pepperjackdev/chess&quot;,
-    &quot;accountId&quot;: &quot;10b10c42-9d93-461a-9fcd-268451b7b589&quot;
+    &quot;accountId&quot;: &quot;755ce906-8eff-4c58-941f-7b417d5d4c98&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -140,10 +178,11 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "onboarding.tips.debug.path": "C:/Dev/projects/game_of_chess/src/main/java/me/pepperjackdev/chess/Main.java",
-    "project.structure.last.edited": "SDKs",
+    "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.20605469",
     "project.structure.side.proportion": "0.4632184",
-    "settings.editor.selected.configurable": "configurable.group.build",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -167,106 +206,31 @@
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
     </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="me.pepperjackdev.chess" />
+    </key>
     <key name="CreateTestDialog.RecentsKey">
       <recent name="me.pepperjackdev.chess.io.data.state" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.StateConverterTest">
-    <configuration name="Run Server" type="GradleRunConfiguration" factoryName="Gradle">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/server" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="bootRun" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="StateConverterTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":core:test" />
-            <option value="--tests" />
-            <option value="&quot;me.pepperjackdev.chess.io.StateConverterTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="chess [dependencies]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="dependencies" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="ServerApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="chess.server.main" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="me.pepperjackdev.chess.server.ServerApplication" />
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="ClientApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="chess.client.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="me.pepperjackdev.client.ClientApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="chess.server.main" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="me.pepperjackdev.chess.server.server.ServerApplication" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Gradle.Run Server" />
-      <item itemvalue="Gradle.StateConverterTest" />
-      <item itemvalue="Gradle.chess [dependencies]" />
-      <item itemvalue="Spring Boot.ServerApplication (1)" />
-      <item itemvalue="Spring Boot.ServerApplication" />
-    </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Gradle.StateConverterTest" />
-        <item itemvalue="Gradle.chess [dependencies]" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -294,7 +258,12 @@
       <workItem from="1752057854927" duration="1373000" />
       <workItem from="1752063792688" duration="3352000" />
       <workItem from="1752337693531" duration="4503000" />
-      <workItem from="1757010738261" duration="375000" />
+      <workItem from="1757010738261" duration="508000" />
+      <workItem from="1757011256543" duration="4000" />
+      <workItem from="1757011284903" duration="72000" />
+      <workItem from="1757011366895" duration="64000" />
+      <workItem from="1757011472672" duration="783000" />
+      <workItem from="1757012270884" duration="940000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <option name="closed" value="true" />
@@ -344,7 +313,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752067167918</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Code refactor">
+      <option name="closed" value="true" />
+      <created>1757011124753</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1757011124753</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -368,6 +345,11 @@
     <MESSAGE value="Created the `server` springboot module" />
     <MESSAGE value="Created DTOs for Actions" />
     <MESSAGE value="Added custom serializer for State" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added custom serializer for State" />
+    <MESSAGE value="Code refactor" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code refactor" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
