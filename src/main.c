@@ -1,34 +1,53 @@
 #include <raylib.h>
 #include <stdint.h>
 
-#define TYPE_PAWN   0b00000000
-#define TYPE_BISHOP 0b00000001
-#define TYPE_KNIGHT 0b00000010
-#define TYPE_ROOK   0b00000011
-#define TYPE_QUEEN  0b00000100
-#define TYPE_KING   0b00000101
-
-#define SIDE_WHITE  0b00000000
-#define SIDE_BLACK  0b00001000
+// Pages
 
 typedef enum {
   CHESSBOARD = 0,
 } Page;
 
+// Piece
+
+typedef enum {
+  TYPE_PAWN   = 0b00000001,
+  TYPE_ROOK   = 0b00000010,
+  TYPE_KNIGHT = 0b00000011,
+  TYPE_BISHOP = 0b00000100,
+  TYPE_QUEEN  = 0b00000101,
+  TYPE_KING   = 0b00000111
+} Type;
+
+typedef enum {
+  SIDE_WHITE = 0b00000000,
+  SIDE_BLACK = 0b00001000
+} Side;
+
+typedef uint8_t Piece;
+
+Piece piece_of(Type type, Side side) {
+  return type | side;
+}
+
+Type type_of(Piece piece) {
+  return piece & 0b00000111;
+}
+
+Side side_of(Piece piece) {
+  return piece & 0b00001000;
+}
+
+// Assets
+
 typedef struct {
   Texture chess_pieces_sprite;
 } Assets;
 
+// Board
+
 typedef uint8_t Board[64];
 
-uint8_t make_piece(uint8_t type, uint8_t side) {
-  return type | side;
-}
-
-void load_fen_into_board(char *fen, Board *board) {
-}
-
-void draw_chessboard_page(Assets assets) {
+void draw_chessboard_page(Assets *assets, Board *board) {
   for (int rank = 0; rank < 8; rank++) {
     for (int file = 0; file < 8; file++) {
       // drawing the squares
@@ -42,11 +61,32 @@ void draw_chessboard_page(Assets assets) {
         );
       }
       // drawing the pieces
-      DrawTexturePro(assets.chess_pieces_sprite, 
-        (Rectangle){0, 0, 320, 320}, 
+      if (*board[rank * 8 + file] == 0) {
+        continue;
+      }
+
+
+      int row, col;
+      
+      if (side_of(*board[rank * 8 + file]) == SIDE_WHITE) {
+        row = 0;
+      } else {
+        row = 1;
+      }
+
+      switch (type_of(*board[rank * 8 + file])) {
+        case TYPE_KING:
+          col = 0;
+          break;
+        default:
+          col = 5;
+      }
+
+      DrawTexturePro(assets->chess_pieces_sprite, 
+        (Rectangle){row * 320, col * 320, 320, 320}, 
         (Rectangle){
-          0, 
-          0, 
+          (float)file * GetScreenWidth() / 8.0f, 
+          (float)rank * GetScreenHeight() / 8.0f, 
           (float)GetScreenWidth() / 8.0f, 
           (float)GetScreenHeight() / 8.0f
         },
@@ -58,10 +98,12 @@ void draw_chessboard_page(Assets assets) {
   }
 }
 
-void draw_page(Page page, Assets assets) {
+void draw_page(Page page, Assets *assets, Board *board) {
   switch (page) {
     case CHESSBOARD:
-        draw_chessboard_page(assets);
+        draw_chessboard_page(assets, board);
+        break;
+    default:
         break;
   }
 }
@@ -74,7 +116,16 @@ int main() {
   Image sprite_image = LoadImage("assets/sprites/chess_pieces_sprite.png");
   Texture sprite_texture = LoadTextureFromImage(sprite_image);
 
-  Board board = {}; 
+  Board board = {
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0
+  }; 
 
   Assets assets = (Assets) {
     sprite_texture
@@ -85,7 +136,7 @@ int main() {
   while (!WindowShouldClose()) {
     BeginDrawing();
       ClearBackground(RAYWHITE);
-      draw_page(CHESSBOARD, assets);
+      draw_page(CHESSBOARD, &assets, &board);
     EndDrawing();
   }
 
