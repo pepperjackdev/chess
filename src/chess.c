@@ -19,7 +19,7 @@ PieceSide side_of(Piece piece) {
 void load_fen_into_board(char *fen, Board *board) {
   // Clearing board
   for (int i = 0; i < 65; i++) {
-    (*board)[i] = 0;
+(*board)[i] = 0;
   }
   // Loading FEN content into board
   for (int fen_index = 0, board_index = 0; 

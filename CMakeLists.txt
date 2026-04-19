@@ -7,6 +7,7 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 add_executable(chess
   src/main.c
   src/chess.c
+  src/page.c
 )
 
 find_package(raylib QUIET)
