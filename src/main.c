@@ -76,23 +76,14 @@ void draw_page(Page page) {
 
 int main() {
   SetTargetFPS(60);
-  SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   InitWindow(960, 960, "Chess");
 
   Image spriteImage = LoadImage("assets/sprites/chess_pieces_sprite.png");
   Texture2D spriteTexture = LoadTextureFromImage(spriteImage);
   UnloadImage(spriteImage);
 
-  Board board = {
-    piece_of(TYPE_PAWN, SIDE_WHITE), 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, piece_of(TYPE_BISHOP, SIDE_BLACK), 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0
-  };
+  Board board;
+  load_fen_into_board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", &board);
 
   BoardPage boardPage = {
     &spriteTexture,
