@@ -5,6 +5,7 @@ include(FetchContent)
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED True)
+set(CMAKE_BUILD_TYPE Debug)
 
 FetchContent_Declare(
   raylib

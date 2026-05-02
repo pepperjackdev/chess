@@ -12,26 +12,28 @@ PieceType type_of(Piece piece) {
 }
 
 PieceSide side_of(Piece piece) {
-    return piece & SIDE_BLACK;
+    return piece & 0b00001000;
 }
 
 void load_fen_into_board(char *fen, Board *board) {
     if (fen == NULL || board == NULL) return;
+    
     // Clearing the Board
     memset(*board, 0, 64);
-    
-    // Parsing
-    int rank = 0;
-    int file = 0;
 
-    for (int i = 0; fen[i] != '\0' && fen[i] != ' '; i++) {
-        char symbol = fen[i];
+    for (int fen_index = 0, rank = 0, file = 0; 
+        fen[fen_index] != '\0' && fen[fen_index] != ' '; 
+        fen_index++) {
+
+        char symbol = fen[fen_index];
+
         // End of Rank
         if (symbol == '/') {
             rank++;
             file = 0;
             continue;
         }
+        
         // Empty spaces
         if (symbol >= '1' && symbol <= '8') {
             file += symbol - '0';
