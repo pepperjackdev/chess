@@ -15,11 +15,9 @@ PieceSide side_of(Piece piece) {
     return piece & 0b00001000;
 }
 
-void load_fen_into_board(char *fen, Board *board) {
-    if (fen == NULL || board == NULL) return;
-    
+void load_fen_into_board(char *fen, int index, State *state) {    
     // Clearing the Board
-    memset(*board, 0, 64);
+    memset(state->piece_placement_data, 0, 64);
 
     for (int fen_index = 0, rank = 0, file = 0; 
         fen[fen_index] != '\0' && fen[fen_index] != ' '; 
@@ -41,6 +39,8 @@ void load_fen_into_board(char *fen, Board *board) {
         }
 
         // Piece
+
+        // Determining piece
         PieceType type = 0;
         PieceSide side = SIDE_WHITE;
 
@@ -61,16 +61,75 @@ void load_fen_into_board(char *fen, Board *board) {
 
             default:
                 fprintf(stderr, 
-                    "Warning: Invalid FEN character '%c'\n", 
-                    symbol);
+                    "Warning: Invalid FEN character '%c'\n", symbol);
                 continue;
         }
 
-        // Loading determied piece into board
+        // Loading determined piece into board
         if (type != 0 && file < 8) {
             int square = rank * 8 + file;
-            (*board)[square] = piece_of(type, side);
+            state->piece_placement_data[square] = piece_of(type, side);
             file++;
+        }
+    }
+}
+
+void load_fen_into_active_color(char *fen, int index, State *state) {
+    PieceSide active_color;
+    switch (fen[index]) {
+        case 'w': active_color = SIDE_WHITE; break;
+        case 'b': active_color = SIDE_BLACK; break;
+        
+        default:
+            fprintf(stderr,
+            "Warning: Invalid FEN character '%c'\n", fen[index]);
+    }
+    state->active_color=active_color;
+}
+
+void load_fen_into_castling_availability(char *fen, int index, State *state) {
+    CastlingRights castling;
+    if (fen[0] == '-') {
+        castling = 0x00; // No one can castle
+    } else {
+        for (int i = 0; fen[i] != ' '; i++) {
+            // TODO
+        }
+    }
+    state->castling_availability = castling;
+}
+
+void load_fen_into_en_passant_target_square(char *fen, int index, State *state) {
+
+}
+
+void load_fen_halfmove_clock(char *fen, int index, State *state) {
+
+}
+
+void load_fen_fullmove_clock(char *fen, int index, State *state) {
+
+}
+
+void load_fen_into_state(char *fen, State *state) {
+    if (fen == NULL || state == NULL) return;
+
+    // Loaders
+    void (*loader[])(char*, int, State*) = {
+        load_fen_into_board,
+        load_fen_into_active_color,
+        load_fen_into_castling_availability,
+        load_fen_into_en_passant_target_square,
+        load_fen_halfmove_clock,
+        load_fen_fullmove_clock
+    };
+
+    // Reading FEN string
+    for (int fen_index = 0, loader_index = 0;
+        fen[fen_index] != '\0';
+        fen_index++) {
+        if (fen_index == 0 || fen[fen_index] == ' ') {
+            loader[loader_index++](fen, ++fen_index, state);
         }
     }
 }

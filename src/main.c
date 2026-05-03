@@ -12,7 +12,6 @@ int main() {
   UnloadImage(sprite_image);
 
   Board board;
-  load_fen_into_board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", &board);
 
   BoardPage board_page = {
     &sprite_texture,
