@@ -14,3 +14,6 @@ build: generate
 generate:
 	cmake -B build -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
+# Clean
+clean:
+	cmake --build build --target clean
