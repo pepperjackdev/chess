@@ -18,7 +18,9 @@ FetchContent_MakeAvailable(raylib)
 add_executable(chess
   src/main.c
   src/chess.c
-  src/page.c
+  src/ui/page.c
+  src/ui/game_page.c
+  src/io/fen.c
 )
 
 find_package(raylib QUIET)

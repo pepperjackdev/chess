@@ -1,21 +1,22 @@
-#include "page.h"
+#include "ui/game_page.h"
+
 #include <raylib.h>
 
-void update_board_page(BoardPage *board_page) {
+void update_game_page(GamePage *game_page) {
   int col = GetMouseX() / (GetScreenWidth() / 8);
   int row = GetMouseY() / (GetScreenHeight() / 8);
   
   if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-    if ((*board_page->board)[row * 8 + col] != 0) {
-      board_page->drag_start_index = row * 8 + col;
+    if (game_page->state->piece_placement_data[row * 8 + col] != 0) {
+      game_page->drag_start_index = row * 8 + col;
     }
   }
 
   if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-    Piece piece = (*board_page->board)[board_page->drag_start_index];
-    (*board_page->board)[board_page->drag_start_index] = 0;
-    (*board_page->board)[row * 8 + col] = piece;
-    board_page->drag_start_index = -1;
+    Piece piece = game_page->state->piece_placement_data[game_page->drag_start_index];
+    game_page->state->piece_placement_data[game_page->drag_start_index] = 0;
+    game_page->state->piece_placement_data[row * 8 + col] = piece;
+    game_page->drag_start_index = -1;
   }
 }
 
@@ -30,7 +31,7 @@ Rectangle get_piece_sprite(Piece piece) {
   };
 };
 
-void draw_board_page(BoardPage *board_page) {
+void draw_game_page(GamePage *game_page) {
   float squareWidth = GetScreenWidth() / 8.0f;
   float squareHeight = GetScreenHeight() / 8.0f;
 
@@ -44,16 +45,16 @@ void draw_board_page(BoardPage *board_page) {
           squareWidth,
           squareHeight, 
           ((row + col) % 2 == 0) ? 
-            board_page->black_square_color : 
-            board_page->white_square_color
+            game_page->black_square_color : 
+            game_page->white_square_color
       );
 
       // Pieces
-      Piece piece = (*board_page->board)[row * 8 + col];
+      Piece piece = game_page->state->piece_placement_data[row * 8 + col];
       if (piece == 0) continue;
-      if (board_page->drag_start_index != (row * 8 + col)) {
+      if (game_page->drag_start_index != (row * 8 + col)) {
         DrawTexturePro(
-          *board_page->sprite, 
+          *game_page->sprite, 
           get_piece_sprite(piece), 
           (Rectangle){
             col * squareWidth,
@@ -70,10 +71,10 @@ void draw_board_page(BoardPage *board_page) {
   }
 
   // Drawing pieces over the boardd
-  if (board_page->drag_start_index != -1) {
+  if (game_page->drag_start_index != -1) {
     DrawTexturePro(
-      *board_page->sprite, 
-      get_piece_sprite((*board_page->board)[board_page->drag_start_index]),
+      *game_page->sprite, 
+      get_piece_sprite(game_page->state->piece_placement_data[game_page->drag_start_index]),
       (Rectangle){
         GetMouseX() - squareWidth / 2,
         GetMouseY() - squareHeight / 2,
@@ -86,20 +87,3 @@ void draw_board_page(BoardPage *board_page) {
     );
   }
 }
-
-void update_page(Page page) {
-  switch (page.page_type) {
-    case BOARD:
-      update_board_page(page.page_data);
-      break;
-  }
-}
-
-void draw_page(Page page) {
-  switch (page.page_type) {
-    case BOARD:
-      draw_board_page((BoardPage*)page.page_data);
-      break;
-  }
-}
-
