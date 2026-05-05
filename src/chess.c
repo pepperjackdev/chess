@@ -88,27 +88,55 @@ void load_fen_into_active_color(char *fen, int index, State *state) {
 }
 
 void load_fen_into_castling_availability(char *fen, int index, State *state) {
-    CastlingRights castling;
-    if (fen[0] == '-') {
-        castling = 0x00; // No one can castle
-    } else {
-        for (int i = 0; fen[i] != ' '; i++) {
-            // TODO
+    CastlingRights castling = 0x00;
+    if (fen[index] != '-') {
+        for (int i = index; fen[i] != ' '; i++) {
+            switch (fen[i]) {
+                case 'K': castling |= CASTLING_WHITE_KING_SIDE; break;
+                case 'Q': castling |= CASTLING_WHITE_QUEEN_SIDE; break;
+                case 'k': castling |= CASTLING_BLACK_KING_SIDE; break;
+                case 'q': castling |= CASTLING_BLACK_QUEEN_SIDE; break;
+                default:
+                    fprintf(stderr, 
+                        "Warning: Invalid FEN character '%c", fen[i]);
+            }
         }
     }
     state->castling_availability = castling;
 }
 
 void load_fen_into_en_passant_target_square(char *fen, int index, State *state) {
+    int target_square = -1; // No target square
+    if (fen[index] != '-') {
+        int rank, file;
 
+        if (fen[index + 1] >= '1' && fen[index + 1] <= '8') {
+            rank = fen[index + 1] - '1';
+        }
+
+        if (fen[index] >= 'a' && fen[index] <= 'h') {
+            file = fen[index] - 'a';
+        }
+
+        target_square = rank * 8 + file;
+    }
+    state->en_passant_target_square = target_square;
 }
 
-void load_fen_halfmove_clock(char *fen, int index, State *state) {
-
+void load_fen_into_halfmove_clock(char *fen, int index, State *state) {
+    int halfmove_clock = 0;
+    for (int i = index; fen[i] != ' '; i++) {
+        halfmove_clock = halfmove_clock * 10 + (fen[i] - '0');
+    }
+    state->halfmove_clock = halfmove_clock;
 }
 
-void load_fen_fullmove_clock(char *fen, int index, State *state) {
-
+void load_fen_into_fullmove_clock(char *fen, int index, State *state) {
+    int fullmove_clock = 0;
+    for (int i = index; fen[i] != '\0'; i++) {
+        fullmove_clock = fullmove_clock * 10 + (fen[i] - '0');
+    }
+    state->fullmove_clock = fullmove_clock;
 }
 
 void load_fen_into_state(char *fen, State *state) {
@@ -120,8 +148,8 @@ void load_fen_into_state(char *fen, State *state) {
         load_fen_into_active_color,
         load_fen_into_castling_availability,
         load_fen_into_en_passant_target_square,
-        load_fen_halfmove_clock,
-        load_fen_fullmove_clock
+        load_fen_into_halfmove_clock,
+        load_fen_into_fullmove_clock
     };
 
     // Reading FEN string
