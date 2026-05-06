@@ -1,7 +1,6 @@
 #include "ui/page.h"
 
 #include "ui/game_page.h"
-#include <raylib.h>
 
 void update_page(Page page) {
   switch (page.page_type) {

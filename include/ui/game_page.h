@@ -9,7 +9,7 @@ typedef struct {
   Color black_square_color;
   Color white_square_color;
   State *state;
-  int drag_start_index;
+  int move_source_index;
 } GamePage;
 
 void update_game_page(GamePage *game_page);

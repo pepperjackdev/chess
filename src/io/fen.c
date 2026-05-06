@@ -5,7 +5,7 @@
 
 void parse_fen_into_board(char *fen, int index, State *state) {    
     // Clearing the Board
-    memset(state->piece_placement_data, 0, 64);
+    memset(state->placement, 0, 64);
 
     for (int fen_index = 0, rank = 0, file = 0; 
         fen[fen_index] != '\0' && fen[fen_index] != ' '; 
@@ -56,7 +56,7 @@ void parse_fen_into_board(char *fen, int index, State *state) {
         // Loading determined piece into board
         if (type != 0 && file < 8) {
             int square = rank * 8 + file;
-            state->piece_placement_data[square] = piece_of(type, side);
+            state->placement[square] = piece_of(type, side);
             file++;
         }
     }
@@ -72,7 +72,7 @@ void parse_fen_into_active_color(char *fen, int index, State *state) {
             fprintf(stderr,
             "Warning: Invalid FEN character '%c'\n", fen[index]);
     }
-    state->active_color=active_color;
+    state->active_side=active_color;
 }
 
 void parse_fen_into_castling_availability(char *fen, int index, State *state) {
@@ -90,7 +90,7 @@ void parse_fen_into_castling_availability(char *fen, int index, State *state) {
             }
         }
     }
-    state->castling_availability = castling;
+    state->castling_rights = castling;
 }
 
 void parse_fen_into_en_passant_target_square(char *fen, int index, State *state) {
@@ -108,7 +108,7 @@ void parse_fen_into_en_passant_target_square(char *fen, int index, State *state)
 
         target_square = rank * 8 + file;
     }
-    state->en_passant_target_square = target_square;
+    state->en_passant = target_square;
 }
 
 void parse_fen_into_halfmove_clock(char *fen, int index, State *state) {

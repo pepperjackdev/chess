@@ -33,14 +33,21 @@ enum CastlingRights {
 typedef uint8_t CastlingRights;
 
 typedef struct {
-  Board piece_placement_data;
-  PieceSide active_color;
-  CastlingRights castling_availability;
-  int en_passant_target_square;
+  Board placement;
+  PieceSide active_side;
+  CastlingRights castling_rights;
+  int en_passant_index;
   int halfmove_clock;
   int fullmove_clock;
 } State;
 
+typedef struct {
+  int source;
+  int target;
+} Move;
+
 Piece piece_of(PieceType type, PieceSide side);
 PieceType type_of(Piece piece);
 PieceSide side_of(Piece piece);
+
+void move(Move move, State *state);
