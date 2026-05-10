@@ -8,4 +8,7 @@ typedef struct {
     int capacity;
 } Array;
 
-#define ARRAY_FROM_C_ARRAY(c_array) (Array){&c_array, SIZEOF_C_ARRAY(c_array), SIZEOF_C_ARRAY(c_array)}
+#define ARRAY_FROM_C_ARRAY(c_array) (Array){ \
+        &c_array, \
+        SIZEOF_C_ARRAY(c_array), SIZEOF_C_ARRAY(c_array) \
+    }

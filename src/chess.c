@@ -1,5 +1,6 @@
 #include "chess.h"
 #include "utils/array.h"
+#include <stdint.h>
 #include <stdio.h>
 
 Piece piece_of(PieceType type, PieceSide side) {
@@ -20,19 +21,32 @@ bool compare(Move m1, Move m2) {
 
 Array get_type_move_pattern(PieceType type) {
     switch (type) {
-        case TYPE_NULL:     return (Array){NULL, 0, 0};
-        case TYPE_KING:     return (Array){NULL, 0, 0};
-        case TYPE_QUEEN:    return (Array){NULL, 0, 0};
-        case TYPE_BISHOP:   return (Array){NULL, 0, 0};
-        case TYPE_KNIGHT:   return (Array){NULL, 0, 0};
+        case TYPE_KING:     return ARRAY_FROM_C_ARRAY(KING_MOVE_PATTERNS);
+        case TYPE_QUEEN:    return ARRAY_FROM_C_ARRAY(QUEEN_MOVE_PATTERNS);
+        case TYPE_BISHOP:   return ARRAY_FROM_C_ARRAY(BISHOP_MOVE_PATTERNS);
+        case TYPE_KNIGHT:   return ARRAY_FROM_C_ARRAY(KNIGHT_MOVE_PATTERNS);
         case TYPE_ROOK:     return ARRAY_FROM_C_ARRAY(ROOK_MOVE_PATTERNS);
-        case TYPE_PAWN:     return (Array){NULL, 0, 0};
+        case TYPE_PAWN:     return ARRAY_FROM_C_ARRAY(PAWN_MOVE_PATTERNS);
         default:
             fprintf(stderr, 
-                "Cannot fint MovePattern for Type %b", 
+                "Cannot find MovePattern for Type %b\n", 
                 type
             );
     }
+
+    return (Array){NULL, 0, 0};
+}
+
+uint8_t compute_conditions(Move move, State *state) {
+    uint8_t condition = 0x00;
+    Piece moving = state->placement[move.source];
+    Piece target = state->placement[move.target];
+    condition |= (target == 0) ? SQUARE_EMPTY : 0x00;
+    condition |= (target != 0 && side_of(target) == side_of(moving)) ? SQUARE_OCCUPIED_ALLY : 0x00;
+    condition |= (target != 0 && side_of(target) != side_of(moving)) ? SQUARE_OCCUPIED_ENEMY : 0x00;
+    condition |= (move.target == state->en_passant_index) ? SQUARE_EN_PASSANT : 0x00;
+    condition |= (moving & PIECE_HAS_BEEN_MOVED) ?  0x00 : PIECE_NEVER_MOVED;
+    return condition;
 }
 
 void generate_piece_legal_moves(Array *moves, int index, State *state) {
@@ -50,34 +64,24 @@ void generate_piece_legal_moves(Array *moves, int index, State *state) {
             int new_index = index;
 
             // For each square along a direction
-            for (int j = 0; j < pattern->limit; j++) {
+            for (int j = 0; j < pattern->limit || pattern->limit == -1; j++) {
                 new_index += direction * coefficient;
                 if (new_index < 0 || new_index >= 64) break;
 
-                bool status_match;
                 Piece target_piece = state->placement[new_index];
-                switch (pattern->status) {
-                    case SQUARE_EMPTY: 
-                        status_match = target_piece == 0;
-                        break;
-                    case SQUARE_OCCUPIED_ALLY: 
-                        status_match = target_piece != 0 &&
-                            side_of(target_piece) == side_of(piece); 
-                        break;
-                    case SQUARE_OCCUPIED_ENEMY:
-                        status_match = target_piece != 0 &&
-                            side_of(target_piece) != side_of(piece); 
-                        break;
-                    case SQUARE_EMPTY_OR_OCCUPIED_BY_ENEMY:
-                        status_match = target_piece == 0 ||
-                            side_of(target_piece) != side_of(piece); 
-                        break;
-                }
 
-                if (status_match) {
-                    ((Move*)moves->array)[moves->length] = (Move){index, new_index};   
+                bool condition = pattern->condition & 
+                    compute_conditions((Move){index, new_index}, state);
+
+                if (condition) {
+                    ((Move*)moves->array)[moves->length] = (Move){
+                        index, 
+                        new_index
+                    };   
                     moves->length++;
                 }
+
+                if (target_piece != 0) break;
             }
         }
     }
@@ -87,6 +91,7 @@ void generate_legal_moves(Array *moves, State *state) {
     moves->length = 0;
     for (int i = 0; i < 64; i++) {
         Piece piece = state->placement[i];
+        if (piece == 0) continue;
         if (side_of(piece) != state->active_side) continue;
         generate_piece_legal_moves(moves, i, state);
     }
@@ -94,25 +99,13 @@ void generate_legal_moves(Array *moves, State *state) {
 
 void move(Move move, State *state) {
     LEGAL_MOVES_CACHE.length = 0;
-
     generate_legal_moves(&LEGAL_MOVES_CACHE, state);
-
-    printf("Generated moves: %d\n", LEGAL_MOVES_CACHE.length);
-
-    for (int i = 0; i < LEGAL_MOVES_CACHE.length; i++) {
-        printf("Move %d -> %d\n",
-            LEGAL_MOVES_CACHE_C_ARRAY[i].source,
-            LEGAL_MOVES_CACHE_C_ARRAY[i].target
-        );
-    }
-
     for (int i = 0; i < LEGAL_MOVES_CACHE.length; i++) {
         if (compare(move, ((Move*)LEGAL_MOVES_CACHE.array)[i])) {
             Piece piece = state->placement[move.source];
-
             state->placement[move.source] = 0;
-            state->placement[move.target] = piece;
-
+            state->placement[move.target] = piece | PIECE_HAS_BEEN_MOVED;
+            state->active_side ^= SIDE_BLACK;
             return;
         }
     }
