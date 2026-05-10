@@ -108,7 +108,7 @@ void parse_fen_into_en_passant_target_square(char *fen, int index, State *state)
 
         target_square = rank * 8 + file;
     }
-    state->en_passant = target_square;
+    state->en_passant_index = target_square;
 }
 
 void parse_fen_into_halfmove_clock(char *fen, int index, State *state) {

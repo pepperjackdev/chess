@@ -52,6 +52,14 @@ void draw_game_page(GamePage *game_page) {
             game_page->white_square_color
       );
 
+      DrawText(
+        TextFormat("%d", row * 8 + col), 
+        col * squareWidth + 10,
+        row * squareHeight + 10,
+        20,
+        BLACK
+      );
+
       // Pieces
       Piece piece = game_page->state->placement[row * 8 + col];
       if (piece == 0) continue;
