@@ -21,6 +21,7 @@ add_executable(chess
   src/ui/page.c
   src/ui/game_page.c
   src/io/fen.c
+  src/utils/array.c
 )
 
 find_package(raylib QUIET)

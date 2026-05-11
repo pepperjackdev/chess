@@ -1,9 +1,10 @@
 #include <raylib.h>
 
+#include "chess.h"
+
 #include "ui/page.h"
 #include "ui/game_page.h"
 
-#include "io/fen.h"
 
 int main() {
   SetTargetFPS(60);
@@ -14,9 +15,9 @@ int main() {
   UnloadImage(sprite_image);
 
   State state;
-  parse_fen_into_state(
-    "rnbqkbnr/1ppppppp/8/8/8/8/1PPPPPPP/RNBQKBNR w KQkq - 0 1", 
-    &state
+  state_create(
+    &state, 
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
   );
 
   GamePage game_page = {
@@ -40,5 +41,7 @@ int main() {
     EndDrawing();
   }
 
+  state_delete(&state);
+  
   CloseWindow();
 }

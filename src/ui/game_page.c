@@ -52,6 +52,26 @@ void draw_game_page(GamePage *game_page) {
             game_page->white_square_color
       );
 
+      // Highlight target squares...
+      // FIXME: too expensive!
+      generate_legal_moves(
+        &game_page->state->legal_moves_cache, 
+        game_page->state
+      );
+      for (int i = 0; i < game_page->state->legal_moves_cache.length; i++) {
+        Move move = ((Move*)game_page->state->legal_moves_cache.array)[i];
+        if (game_page->move_source_index == -1) break;
+        if (move.source == game_page->move_source_index && move.target == row * 8 + col) {
+          DrawRectangle(
+              col * squareWidth,
+              row * squareHeight,
+              squareWidth,
+              squareHeight, 
+              RED
+          );
+        }
+      }
+
       DrawText(
         TextFormat("%d", row * 8 + col), 
         col * squareWidth + 10,

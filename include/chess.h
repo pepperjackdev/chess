@@ -5,6 +5,8 @@
 
 #define CHESS_MAX_NUMBER_OF_MOVES 256
 
+typedef uint8_t Piece;
+
 typedef enum : uint8_t {
   TYPE_NULL   = 0b00000000,
   TYPE_KING   = 0b00000001,
@@ -21,10 +23,8 @@ typedef enum : uint8_t {
 } PieceSide;
 
 typedef enum : uint8_t {
-  PIECE_HAS_BEEN_MOVED = 0b00010000,
+  FLAG_MOVED = 0b00010000,
 } PieceFlags;
-
-typedef uint8_t Piece;
 
 Piece piece_of(PieceType type, PieceSide side);
 PieceType type_of(Piece piece);
@@ -40,20 +40,24 @@ typedef enum : uint8_t {
 } CastlingRights;
 
 typedef struct {
+  int source;
+  int target;
+} Move;
+
+bool compare(Move m1, Move m2);
+
+typedef struct {
   Board placement;
   PieceSide active_side;
   CastlingRights castling_rights;
   int en_passant_index;
   int halfmove_clock;
   int fullmove_clock;
+  Array legal_moves_cache;
 } State;
 
-typedef struct {
-  int source;
-  int target;
-} Move;
-
-bool compare(Move m1, Move m2);
+void state_create(State *state, char *fen);
+void state_delete(State *state);
 
 typedef enum {
   NORTH            = -8,
@@ -168,13 +172,6 @@ REGISTER_PIECE_MOVE_PATTERNS(PAWN,
   &PAWN_CAPTURE_MOVE_PATTERN,
   &PAWN_EN_PASSANT_MOVE_PATTERN
 );
-
-static Move LEGAL_MOVES_CACHE_C_ARRAY[256];
-static Array LEGAL_MOVES_CACHE = (Array){
-  LEGAL_MOVES_CACHE_C_ARRAY,
-  0,
-  CHESS_MAX_NUMBER_OF_MOVES
-};
 
 void generate_legal_moves(Array *moves, State *state);
 void move(Move move, State *state);

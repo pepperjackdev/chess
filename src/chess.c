@@ -1,5 +1,8 @@
 #include "chess.h"
+
+#include "io/fen.h"
 #include "utils/array.h"
+
 #include <stdint.h>
 #include <stdio.h>
 
@@ -17,6 +20,15 @@ PieceSide side_of(Piece piece) {
 
 bool compare(Move m1, Move m2) {
     return m1.source == m2.source && m1.target == m2.target;
+}
+
+void state_create(State *state, char *fen) {
+    parse_fen_into_state(fen, state);
+    state->legal_moves_cache = array_create(CHESS_MAX_NUMBER_OF_MOVES);
+}
+
+void state_delete(State *state) {
+    array_delete(&state->legal_moves_cache);
 }
 
 Array get_type_move_pattern(PieceType type) {
@@ -45,7 +57,7 @@ uint8_t compute_conditions(Move move, State *state) {
     condition |= (target != 0 && side_of(target) == side_of(moving)) ? SQUARE_OCCUPIED_ALLY : 0x00;
     condition |= (target != 0 && side_of(target) != side_of(moving)) ? SQUARE_OCCUPIED_ENEMY : 0x00;
     condition |= (move.target == state->en_passant_index) ? SQUARE_EN_PASSANT : 0x00;
-    condition |= (moving & PIECE_HAS_BEEN_MOVED) ?  0x00 : PIECE_NEVER_MOVED;
+    condition |= (moving & PIECE_NEVER_MOVED) ?  0x00 : PIECE_NEVER_MOVED;
     return condition;
 }
 
@@ -98,13 +110,13 @@ void generate_legal_moves(Array *moves, State *state) {
 }
 
 void move(Move move, State *state) {
-    LEGAL_MOVES_CACHE.length = 0;
-    generate_legal_moves(&LEGAL_MOVES_CACHE, state);
-    for (int i = 0; i < LEGAL_MOVES_CACHE.length; i++) {
-        if (compare(move, ((Move*)LEGAL_MOVES_CACHE.array)[i])) {
+    state->legal_moves_cache.length = 0;
+    generate_legal_moves(&state->legal_moves_cache, state);
+    for (int i = 0; i < state->legal_moves_cache.length; i++) {
+        if (compare(move, ((Move*)state->legal_moves_cache.array)[i])) {
             Piece piece = state->placement[move.source];
             state->placement[move.source] = 0;
-            state->placement[move.target] = piece | PIECE_HAS_BEEN_MOVED;
+            state->placement[move.target] = piece | PIECE_NEVER_MOVED;
             state->active_side ^= SIDE_BLACK;
             return;
         }
