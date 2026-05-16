@@ -44,7 +44,7 @@ typedef struct {
   int target;
 } Move;
 
-bool compare(Move m1, Move m2);
+bool compare_moves(Move m1, Move m2);
 
 typedef struct {
   Board placement;
@@ -59,24 +59,36 @@ typedef struct {
 void state_create(State *state, char *fen);
 void state_delete(State *state);
 
-typedef enum {
-  NORTH            = -8,
-  NORTH_NORTH_EAST = -15,
-  NORTH_EAST       = -7,
-  EAST_NORTH_EAST  = -6,
-  EAST             = 1,
-  EAST_SOUTH_EAST  = 10,
-  SOUTH_EAST       = 9,
-  SOUTH_SOUTH_EAST = 17,
-  SOUTH            = 8,
-  SOUTH_SOUTH_WEST = 15,
-  SOUTH_WEST       = 7,
-  WEST_SOUTH_WEST  = 6,
-  WEST             = -1,
-  WEST_NORTH_WEST  = -10,
-  NORTH_WEST       = -9,
-  NORTH_NORTH_WEST = -17
-} MoveDirection;
+typedef struct {
+  int file;
+  int rank;
+} Index;
+
+typedef struct {
+  int file;
+  int rank;
+} Direction;
+
+#define RANK(index) (index / 8)
+#define FILE(index) (index % 8)
+#define INDEX(position) (position.rank * 8 + position.file)
+
+#define NORTH            (Direction){0, -1}
+#define NORTH_NORTH_EAST (Direction){1, -2}
+#define NORTH_EAST       (Direction){1, -1}
+#define EAST_NORTH_EAST  (Direction){2, -1}
+#define EAST             (Direction){1, 0}
+#define EAST_SOUTH_EAST  (Direction){2, 1}
+#define SOUTH_EAST       (Direction){1, 1}
+#define SOUTH_SOUTH_EAST (Direction){1, 2}
+#define SOUTH            (Direction){0, 1}
+#define SOUTH_SOUTH_WEST (Direction){-1, 2}
+#define SOUTH_WEST       (Direction){-1, 1}
+#define WEST_SOUTH_WEST  (Direction){-2, 1}
+#define WEST             (Direction){-1, 0}
+#define WEST_NORTH_WEST  (Direction){-2, -1}
+#define NORTH_WEST       (Direction){-1, -1}
+#define NORTH_NORTH_WEST (Direction){-1, -2}
 
 typedef enum : uint8_t {
   SQUARE_EMPTY          = 0b00000001,
@@ -86,18 +98,22 @@ typedef enum : uint8_t {
   PIECE_NEVER_MOVED     = 0b00010000
 } MoveCondition;
 
+bool compare_move_conditions(MoveCondition m1, MoveCondition m2);
+
 typedef struct {
   Array directions;
-  int limit;
+  int squares_per_step;
+  int max_number_of_steps;
   MoveCondition condition;
 } MovePattern;
 
-#define MOVE_PATTERN(NAME, limit, status, ...) \
-  static MoveDirection NAME##_MOVE_DIRECTIONS[] = {__VA_ARGS__}; \
+#define MOVE_PATTERN(NAME, squares_per_step, max_number_of_steps, condition, ...) \
+  static Direction NAME##_MOVE_DIRECTIONS[] = {__VA_ARGS__}; \
   static MovePattern NAME##_MOVE_PATTERN = (MovePattern){ \
     ARRAY_FROM_C_ARRAY(NAME##_MOVE_DIRECTIONS), \
-    limit, \
-    status \
+    squares_per_step, \
+    max_number_of_steps, \
+    condition \
   }
 
 #define REGISTER_PIECE_MOVE_PATTERNS(NAME, ...) \
@@ -106,7 +122,7 @@ typedef struct {
   }
 
 // KING
-MOVE_PATTERN(KING, 1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY,
+MOVE_PATTERN(KING, 1, 1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY,
   NORTH, NORTH_EAST, 
   EAST, SOUTH_EAST, 
   SOUTH, SOUTH_WEST, 
@@ -116,7 +132,7 @@ MOVE_PATTERN(KING, 1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY,
 REGISTER_PIECE_MOVE_PATTERNS(KING, &KING_MOVE_PATTERN);
 
 // QUEEN
-MOVE_PATTERN(QUEEN, -1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY,
+MOVE_PATTERN(QUEEN, 1, -1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY,
   NORTH, NORTH_EAST, 
   EAST, SOUTH_EAST, 
   SOUTH, SOUTH_WEST, 
@@ -126,14 +142,14 @@ MOVE_PATTERN(QUEEN, -1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY,
 REGISTER_PIECE_MOVE_PATTERNS(QUEEN, &QUEEN_MOVE_PATTERN);
 
 // BISHOP
-MOVE_PATTERN(BISHOP, -1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY, 
+MOVE_PATTERN(BISHOP, 1, -1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY, 
   NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST
 );
 
 REGISTER_PIECE_MOVE_PATTERNS(BISHOP, &BISHOP_MOVE_PATTERN);
 
 // KNIGHT
-MOVE_PATTERN(KNIGHT, 1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY, 
+MOVE_PATTERN(KNIGHT,1, 1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY, 
   NORTH_NORTH_EAST, EAST_NORTH_EAST,
   EAST_SOUTH_EAST, SOUTH_SOUTH_EAST,
   SOUTH_SOUTH_WEST, WEST_SOUTH_WEST,
@@ -143,26 +159,26 @@ MOVE_PATTERN(KNIGHT, 1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY,
 REGISTER_PIECE_MOVE_PATTERNS(KNIGHT, &KNIGHT_MOVE_PATTERN);
 
 // ROOK
-MOVE_PATTERN(ROOK, -1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY, 
+MOVE_PATTERN(ROOK, 1, -1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY, 
   NORTH, EAST, SOUTH, WEST
 );
  
 REGISTER_PIECE_MOVE_PATTERNS(ROOK, &ROOK_MOVE_PATTERN);
 
 // PAWN
-MOVE_PATTERN(PAWN_FORWARD, 1, SQUARE_EMPTY, 
+MOVE_PATTERN(PAWN_FORWARD, 1, 1, SQUARE_EMPTY, 
   NORTH
 );
 
-MOVE_PATTERN(PAWN_FORWARD_FIRST, 1, SQUARE_EMPTY | PIECE_NEVER_MOVED,
-  NORTH * 2 // Move of two square...
+MOVE_PATTERN(PAWN_FORWARD_FIRST, 2, 1, SQUARE_EMPTY | PIECE_NEVER_MOVED,
+  NORTH
 );
 
-MOVE_PATTERN(PAWN_CAPTURE, 1, SQUARE_OCCUPIED_ENEMY,
+MOVE_PATTERN(PAWN_CAPTURE, 1, 1, SQUARE_OCCUPIED_ENEMY,
   NORTH_EAST, NORTH_WEST
 );
 
-MOVE_PATTERN(PAWN_EN_PASSANT, 1, SQUARE_EN_PASSANT,
+MOVE_PATTERN(PAWN_EN_PASSANT, 1, 1, SQUARE_EN_PASSANT,
   NORTH_WEST, NORTH_EAST
 );
 

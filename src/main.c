@@ -41,6 +41,7 @@ int main() {
     EndDrawing();
   }
 
+  UnloadTexture(sprite_texture);
   state_delete(&state);
   
   CloseWindow();

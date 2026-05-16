@@ -24,6 +24,15 @@ add_executable(chess
   src/utils/array.c
 )
 
+target_compile_options(chess PRIVATE
+    -fsanitize=address
+    -g
+)
+
+target_link_options(chess PRIVATE
+    -fsanitize=address
+)
+
 find_package(raylib QUIET)
 target_link_libraries(chess PRIVATE raylib)
 target_include_directories(chess PRIVATE include)

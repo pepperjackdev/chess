@@ -1,4 +1,5 @@
 #include "ui/game_page.h"
+#include "chess.h"
 
 #include <raylib.h>
 
@@ -72,14 +73,6 @@ void draw_game_page(GamePage *game_page) {
         }
       }
 
-      DrawText(
-        TextFormat("%d", row * 8 + col), 
-        col * squareWidth + 10,
-        row * squareHeight + 10,
-        20,
-        BLACK
-      );
-
       // Pieces
       Piece piece = game_page->state->placement[row * 8 + col];
       if (piece == 0) continue;
@@ -100,7 +93,7 @@ void draw_game_page(GamePage *game_page) {
     }
   }
 
-  // Drawing pieces over the boardd
+  // Drawing pieces over the board
   if (game_page->move_source_index != -1) {
     DrawTexturePro(
       *game_page->sprite, 
