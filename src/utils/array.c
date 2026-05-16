@@ -1,5 +1,3 @@
-#pragma once
-
 #include "utils/array.h"
 
 #include <stdlib.h>
