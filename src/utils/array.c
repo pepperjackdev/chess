@@ -23,7 +23,7 @@ Array array_create(size_t size) {
 }
 
 void array_delete(Array *array) {
-    free(array);
+    free(array->array);
     
     *array = (Array){
         NULL,
