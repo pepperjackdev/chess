@@ -39,12 +39,25 @@ typedef enum : uint8_t {
   CASTLING_WHITE_QUEEN_SIDE = 0b00001000,
 } CastlingRights;
 
+enum MoveType {
+  PIECE_MOVE,
+};
+
 typedef struct {
   int source;
   int target;
-} Move;
+} PieceMove;
 
-bool compare_moves(Move m1, Move m2);
+union Move {
+  PieceMove piece_move;
+};
+
+bool compare_piece_moves(PieceMove m1, PieceMove m2);
+
+typedef struct {
+  enum MoveType move_type;
+  union Move move_data;
+} Move;
 
 typedef struct {
   Board placement;
@@ -96,28 +109,28 @@ typedef enum : uint8_t {
   SQUARE_OCCUPIED_ENEMY = 0b00000100,
   SQUARE_EN_PASSANT     = 0b00001000,
   PIECE_NEVER_MOVED     = 0b00010000
-} MoveCondition;
+} PieceMoveCondition;
 
-bool compare_move_conditions(MoveCondition m1, MoveCondition m2);
+bool compare_move_conditions(PieceMoveCondition m1, PieceMoveCondition m2);
 
 typedef struct {
   Array directions;
   int squares_per_step;
   int max_number_of_steps;
-  MoveCondition condition;
-} MovePattern;
+  PieceMoveCondition condition;
+} PieceMovePattern;
 
 #define MOVE_PATTERN(NAME, squares_per_step, max_number_of_steps, condition, ...) \
-  static Direction NAME##_MOVE_DIRECTIONS[] = {__VA_ARGS__}; \
-  static MovePattern NAME##_MOVE_PATTERN = (MovePattern){ \
-    ARRAY_FROM_C_ARRAY(NAME##_MOVE_DIRECTIONS), \
+  static Direction NAME##_PIECE_MOVE_DIRECTIONS[] = {__VA_ARGS__}; \
+  static PieceMovePattern NAME##_PIECE_MOVE_PATTERN = (PieceMovePattern){ \
+    ARRAY_FROM_C_ARRAY(NAME##_PIECE_MOVE_DIRECTIONS), \
     squares_per_step, \
     max_number_of_steps, \
     condition \
   }
 
 #define REGISTER_PIECE_MOVE_PATTERNS(NAME, ...) \
-  static MovePattern *NAME##_MOVE_PATTERNS[] = { \
+  static PieceMovePattern *NAME##_PIECE_MOVE_PATTERNS[] = { \
     __VA_ARGS__ \
   }
 
@@ -129,7 +142,7 @@ MOVE_PATTERN(KING, 1, 1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY,
   WEST, NORTH_WEST,
 );
 
-REGISTER_PIECE_MOVE_PATTERNS(KING, &KING_MOVE_PATTERN);
+REGISTER_PIECE_MOVE_PATTERNS(KING, &KING_PIECE_MOVE_PATTERN);
 
 // QUEEN
 MOVE_PATTERN(QUEEN, 1, -1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY,
@@ -139,14 +152,14 @@ MOVE_PATTERN(QUEEN, 1, -1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY,
   WEST, NORTH_WEST,
 );
 
-REGISTER_PIECE_MOVE_PATTERNS(QUEEN, &QUEEN_MOVE_PATTERN);
+REGISTER_PIECE_MOVE_PATTERNS(QUEEN, &QUEEN_PIECE_MOVE_PATTERN);
 
 // BISHOP
 MOVE_PATTERN(BISHOP, 1, -1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY, 
   NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST
 );
 
-REGISTER_PIECE_MOVE_PATTERNS(BISHOP, &BISHOP_MOVE_PATTERN);
+REGISTER_PIECE_MOVE_PATTERNS(BISHOP, &BISHOP_PIECE_MOVE_PATTERN);
 
 // KNIGHT
 MOVE_PATTERN(KNIGHT,1, 1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY, 
@@ -156,14 +169,14 @@ MOVE_PATTERN(KNIGHT,1, 1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY,
   WEST_NORTH_WEST, NORTH_NORTH_WEST,
 );
 
-REGISTER_PIECE_MOVE_PATTERNS(KNIGHT, &KNIGHT_MOVE_PATTERN);
+REGISTER_PIECE_MOVE_PATTERNS(KNIGHT, &KNIGHT_PIECE_MOVE_PATTERN);
 
 // ROOK
 MOVE_PATTERN(ROOK, 1, -1, SQUARE_EMPTY | SQUARE_OCCUPIED_ENEMY, 
   NORTH, EAST, SOUTH, WEST
 );
  
-REGISTER_PIECE_MOVE_PATTERNS(ROOK, &ROOK_MOVE_PATTERN);
+REGISTER_PIECE_MOVE_PATTERNS(ROOK, &ROOK_PIECE_MOVE_PATTERN);
 
 // PAWN
 MOVE_PATTERN(PAWN_FORWARD, 1, 1, SQUARE_EMPTY, 
@@ -183,11 +196,13 @@ MOVE_PATTERN(PAWN_EN_PASSANT, 1, 1, SQUARE_EN_PASSANT,
 );
 
 REGISTER_PIECE_MOVE_PATTERNS(PAWN, 
-  &PAWN_FORWARD_MOVE_PATTERN,
-  &PAWN_FORWARD_FIRST_MOVE_PATTERN,
-  &PAWN_CAPTURE_MOVE_PATTERN,
-  &PAWN_EN_PASSANT_MOVE_PATTERN
+  &PAWN_FORWARD_PIECE_MOVE_PATTERN,
+  &PAWN_FORWARD_FIRST_PIECE_MOVE_PATTERN,
+  &PAWN_CAPTURE_PIECE_MOVE_PATTERN,
+  &PAWN_EN_PASSANT_PIECE_MOVE_PATTERN
 );
 
 void generate_legal_moves(Array *moves, State *state);
-void move(Move move, State *state);
+void submit_piece_move(PieceMove move, State *state);
+
+void submit_move(Move move, State *state);

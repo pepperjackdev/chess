@@ -14,11 +14,14 @@ void update_game_page(GamePage *game_page) {
   }
 
   if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-    move(
+    submit_move(
       (Move){
-        game_page->move_source_index,
-        row * 8 + col
-      }, 
+        PIECE_MOVE,
+        (PieceMove){
+          game_page->move_source_index,
+          row * 8 + col
+        }
+      },
       game_page->state
     );
     game_page->move_source_index = -1;
@@ -60,7 +63,7 @@ void draw_game_page(GamePage *game_page) {
         game_page->state
       );
       for (int i = 0; i < game_page->state->legal_moves_cache.length; i++) {
-        Move move = ((Move*)game_page->state->legal_moves_cache.array)[i];
+        PieceMove move = ((PieceMove*)game_page->state->legal_moves_cache.array)[i];
         if (game_page->move_source_index == -1) break;
         if (move.source == game_page->move_source_index && move.target == row * 8 + col) {
           DrawRectangle(

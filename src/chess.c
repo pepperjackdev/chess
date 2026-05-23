@@ -19,13 +19,13 @@ PieceSide side_of(Piece piece) {
     return piece & 0b00001000;
 }
 
-bool compare_moves(Move m1, Move m2) {
+bool compare_piece_moves(PieceMove m1, PieceMove m2) {
     return m1.source == m2.source && m1.target == m2.target;
 }
 
 void state_create(State *state, char *fen) {
     parse_fen_into_state(fen, state);
-    state->legal_moves_cache = array_create(sizeof(Move) * CHESS_MAX_NUMBER_OF_MOVES);
+    state->legal_moves_cache = array_create(sizeof(PieceMove) * CHESS_MAX_NUMBER_OF_MOVES);
 }
 
 void state_delete(State *state) {
@@ -34,12 +34,12 @@ void state_delete(State *state) {
 
 Array get_type_move_pattern(PieceType type) {
     switch (type) {
-        case TYPE_KING:     return ARRAY_FROM_C_ARRAY(KING_MOVE_PATTERNS);
-        case TYPE_QUEEN:    return ARRAY_FROM_C_ARRAY(QUEEN_MOVE_PATTERNS);
-        case TYPE_BISHOP:   return ARRAY_FROM_C_ARRAY(BISHOP_MOVE_PATTERNS);
-        case TYPE_KNIGHT:   return ARRAY_FROM_C_ARRAY(KNIGHT_MOVE_PATTERNS);
-        case TYPE_ROOK:     return ARRAY_FROM_C_ARRAY(ROOK_MOVE_PATTERNS);
-        case TYPE_PAWN:     return ARRAY_FROM_C_ARRAY(PAWN_MOVE_PATTERNS);
+        case TYPE_KING:     return ARRAY_FROM_C_ARRAY(KING_PIECE_MOVE_PATTERNS);
+        case TYPE_QUEEN:    return ARRAY_FROM_C_ARRAY(QUEEN_PIECE_MOVE_PATTERNS);
+        case TYPE_BISHOP:   return ARRAY_FROM_C_ARRAY(BISHOP_PIECE_MOVE_PATTERNS);
+        case TYPE_KNIGHT:   return ARRAY_FROM_C_ARRAY(KNIGHT_PIECE_MOVE_PATTERNS);
+        case TYPE_ROOK:     return ARRAY_FROM_C_ARRAY(ROOK_PIECE_MOVE_PATTERNS);
+        case TYPE_PAWN:     return ARRAY_FROM_C_ARRAY(PAWN_PIECE_MOVE_PATTERNS);
         default:
             fprintf(stderr, 
                 "Cannot find MovePattern for Type %b\n", 
@@ -50,12 +50,12 @@ Array get_type_move_pattern(PieceType type) {
     return (Array){NULL, 0, 0};
 }
 
-bool compare_move_conditions(MoveCondition m1, MoveCondition m2) {
+bool compare_move_conditions(PieceMoveCondition m1, PieceMoveCondition m2) {
     return (m1 & m2 & 0b00000111)
         && ((m1 & m2 & 0b11111000) == (m2 & 0b11111000));
 }
 
-MoveCondition compute_conditions(Move move, State *state) {
+PieceMoveCondition compute_conditions(PieceMove move, State *state) {
     uint8_t condition = 0x00;
     Piece moving = state->placement[move.source];
     Piece target = state->placement[move.target];
@@ -74,7 +74,7 @@ void generate_piece_legal_moves(Array *moves, int index, State *state) {
 
     // For each move pattern
     for (int pattern_i = 0; pattern_i < move_patterns.length; pattern_i++) {
-        MovePattern *pattern = ((MovePattern**)move_patterns.array)[pattern_i];
+        PieceMovePattern *pattern = ((PieceMovePattern**)move_patterns.array)[pattern_i];
 
         // For each direction in a move pattern
         for (int direction_i = 0; direction_i < pattern->directions.length; direction_i++) {
@@ -108,13 +108,13 @@ void generate_piece_legal_moves(Array *moves, int index, State *state) {
 
                 Piece target_piece = state->placement[new_index];
 
-                MoveCondition computed_condition = compute_conditions(
-                    (Move){index, new_index}, 
+                PieceMoveCondition computed_condition = compute_conditions(
+                    (PieceMove){index, new_index}, 
                     state
                 );
 
                 if (compare_move_conditions(computed_condition, pattern->condition)) {
-                    ((Move*)moves->array)[moves->length] = (Move){
+                    ((PieceMove*)moves->array)[moves->length] = (PieceMove){
                         index, 
                         new_index
                     };
@@ -127,7 +127,7 @@ void generate_piece_legal_moves(Array *moves, int index, State *state) {
     }
 }
 
-void generate_legal_moves(Array *moves, State *state) {
+void generate_pseudo_legal_moves(Array *moves, State *state) {
     moves->length = 0;
     for (int i = 0; i < 64; i++) {
         Piece piece = state->placement[i];
@@ -137,12 +137,17 @@ void generate_legal_moves(Array *moves, State *state) {
     }
 }
 
-void move(Move move, State *state) {
+void generate_legal_moves(Array *moves, State *state) {
+    generate_pseudo_legal_moves(moves, state);
+    
+}
+
+void submit_piece_move(PieceMove move, State *state) {
     if (state->legal_moves_cache.length == 0) {
         generate_legal_moves(&state->legal_moves_cache, state);
     };
     for (int i = 0; i < state->legal_moves_cache.length; i++) {
-        if (compare_moves(move, ((Move*)state->legal_moves_cache.array)[i])) {
+        if (compare_piece_moves(move, ((PieceMove*)state->legal_moves_cache.array)[i])) {
             Piece piece = state->placement[move.source];
             state->placement[move.source] = 0;
             state->placement[move.target] = piece | FLAG_MOVED;
@@ -150,5 +155,11 @@ void move(Move move, State *state) {
             generate_legal_moves(&state->legal_moves_cache, state);
             return;
         }
+    }
+}
+
+void submit_move(Move move, State *state) {
+    switch (move.move_type) {
+        case PIECE_MOVE: submit_piece_move(move.move_data.piece_move,  state); break;
     }
 }
