@@ -39,14 +39,14 @@ typedef enum : uint8_t {
   CASTLING_WHITE_QUEEN_SIDE = 0b00001000,
 } CastlingRights;
 
-enum MoveType {
-  PIECE_MOVE,
-};
-
 typedef struct {
   int source;
   int target;
 } PieceMove;
+
+enum MoveType {
+  PIECE_MOVE,
+};
 
 union Move {
   PieceMove piece_move;
@@ -202,7 +202,7 @@ REGISTER_PIECE_MOVE_PATTERNS(PAWN,
   &PAWN_EN_PASSANT_PIECE_MOVE_PATTERN
 );
 
-void generate_legal_moves(Array *moves, State *state);
-void submit_piece_move(PieceMove move, State *state);
+void generate_legal_piece_moves(Array *moves, State *state);
 
+void submit_piece_move(PieceMove move, State *state);
 void submit_move(Move move, State *state);

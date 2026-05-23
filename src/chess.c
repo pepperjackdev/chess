@@ -67,7 +67,7 @@ PieceMoveCondition compute_conditions(PieceMove move, State *state) {
     return condition;
 }
 
-void generate_piece_legal_moves(Array *moves, int index, State *state) {
+void generate_piece_legal_piece_moves(Array *moves, int index, State *state) {
     Piece piece = state->placement[index];
     int coefficient = (side_of(piece) == SIDE_WHITE) ? 1 : -1;
     Array move_patterns = get_type_move_pattern(type_of(piece));
@@ -133,26 +133,41 @@ void generate_pseudo_legal_moves(Array *moves, State *state) {
         Piece piece = state->placement[i];
         if (piece == 0) continue;
         if (side_of(piece) != state->active_side) continue;
-        generate_piece_legal_moves(moves, i, state);
+        generate_piece_legal_piece_moves(moves, i, state);
     }
 }
 
-void generate_legal_moves(Array *moves, State *state) {
-    generate_pseudo_legal_moves(moves, state);
+bool under_check_after_move(PieceMove move, State *state) {
+    submit_piece_move(move, state);
     
+}
+
+void generate_legal_piece_moves(Array *moves, State *state) {
+    moves->length = 0;
+    PieceMove pseudo_legal_moves[CHESS_MAX_NUMBER_OF_MOVES];
+    Array pseudo_legal_moves_array = ARRAY_FROM_C_ARRAY(pseudo_legal_moves);
+    generate_pseudo_legal_moves(&pseudo_legal_moves_array, state);
+    State local_state;
+    for (int i = 0; i < pseudo_legal_moves_array.length; i++) {
+        local_state = *state;
+        if (!under_check_after_move(pseudo_legal_moves[i], &local_state)) {
+            ((PieceMove*)moves->array)[moves->length++] = pseudo_legal_moves[i];
+        }
+    }    
 }
 
 void submit_piece_move(PieceMove move, State *state) {
     if (state->legal_moves_cache.length == 0) {
-        generate_legal_moves(&state->legal_moves_cache, state);
+        generate_legal_piece_moves(&state->legal_moves_cache, state);
     };
+    
     for (int i = 0; i < state->legal_moves_cache.length; i++) {
         if (compare_piece_moves(move, ((PieceMove*)state->legal_moves_cache.array)[i])) {
             Piece piece = state->placement[move.source];
             state->placement[move.source] = 0;
             state->placement[move.target] = piece | FLAG_MOVED;
             state->active_side ^= SIDE_BLACK;
-            generate_legal_moves(&state->legal_moves_cache, state);
+            generate_legal_piece_moves(&state->legal_moves_cache, state);
             return;
         }
     }

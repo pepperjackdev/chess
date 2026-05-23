@@ -58,7 +58,7 @@ void draw_game_page(GamePage *game_page) {
 
       // Highlight target squares...
       // FIXME: too expensive!
-      generate_legal_moves(
+      generate_legal_piece_moves(
         &game_page->state->legal_moves_cache, 
         game_page->state
       );

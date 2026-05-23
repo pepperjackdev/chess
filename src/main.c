@@ -5,7 +5,6 @@
 #include "ui/page.h"
 #include "ui/game_page.h"
 
-
 int main() {
   SetTargetFPS(60);
   InitWindow(960, 960, "Chess");
