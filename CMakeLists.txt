@@ -15,14 +15,11 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(raylib)
 
-add_executable(chess
-  src/main.c
-  src/chess.c
-  src/ui/page.c
-  src/ui/game_page.c
-  src/io/fen.c
-  src/utils/array.c
+file(GLOB_RECURSE SRC_FILES 
+  "src/*.c"
 )
+
+add_executable(chess ${SRC_FILES})
 
 target_compile_options(chess PRIVATE
     -fsanitize=address

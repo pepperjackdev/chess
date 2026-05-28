@@ -1,5 +1,6 @@
 #include "chess/state.h"
 
+#include "chess/move.h"
 #include "chess/io/fen.h"
 
 void state_create(State *state, char *fen) {
