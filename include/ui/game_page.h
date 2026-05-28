@@ -2,7 +2,7 @@
 
 #include <raylib.h>
 
-#include "chess.h"
+#include "chess/state.h"
 
 typedef struct {
   Texture2D *sprite;

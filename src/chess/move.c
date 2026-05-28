@@ -1,35 +1,9 @@
-#include "chess.h"
+#include "chess/move.h"
 
-#include "io/fen.h"
-#include "utils/array.h"
-
-#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
-
-Piece piece_of(PieceType type, PieceSide side) {
-    return type | side;
-}
-
-PieceType type_of(Piece piece) {
-    return piece & 0b00000111;
-}
-
-PieceSide side_of(Piece piece) {
-    return piece & 0b00001000;
-}
 
 bool compare_piece_moves(PieceMove m1, PieceMove m2) {
     return m1.source == m2.source && m1.target == m2.target;
-}
-
-void state_create(State *state, char *fen) {
-    parse_fen_into_state(fen, state);
-    state->legal_moves_cache = array_create(sizeof(PieceMove) * CHESS_MAX_NUMBER_OF_MOVES);
-}
-
-void state_delete(State *state) {
-    array_delete(&state->legal_moves_cache);
 }
 
 Array get_type_move_pattern(PieceType type) {
@@ -137,23 +111,8 @@ void generate_pseudo_legal_moves(Array *moves, State *state) {
     }
 }
 
-bool under_check_after_move(PieceMove move, State *state) {
-    submit_piece_move(move, state);
-    
-}
-
 void generate_legal_piece_moves(Array *moves, State *state) {
-    moves->length = 0;
-    PieceMove pseudo_legal_moves[CHESS_MAX_NUMBER_OF_MOVES];
-    Array pseudo_legal_moves_array = ARRAY_FROM_C_ARRAY(pseudo_legal_moves);
-    generate_pseudo_legal_moves(&pseudo_legal_moves_array, state);
-    State local_state;
-    for (int i = 0; i < pseudo_legal_moves_array.length; i++) {
-        local_state = *state;
-        if (!under_check_after_move(pseudo_legal_moves[i], &local_state)) {
-            ((PieceMove*)moves->array)[moves->length++] = pseudo_legal_moves[i];
-        }
-    }    
+    generate_pseudo_legal_moves(moves,  state);
 }
 
 void submit_piece_move(PieceMove move, State *state) {

@@ -1,4 +1,4 @@
-#include "io/fen.h"
+#include "chess/io/fen.h"
 
 #include "stdio.h"
 #include "string.h"
