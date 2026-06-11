@@ -138,8 +138,7 @@ void generate_pseudo_legal_moves(Array *moves, State *state) {
 }
 
 bool under_check_after_move(PieceMove move, State *state) {
-    submit_piece_move(move, state);
-    
+    return false; // TODOss
 }
 
 void generate_legal_piece_moves(Array *moves, State *state) {
