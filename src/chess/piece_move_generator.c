@@ -27,7 +27,7 @@ bool compare_move_conditions(PieceMoveCondition m1, PieceMoveCondition m2) {
 }
 
 PieceMoveCondition compute_conditions(PieceMove move, State *state) {
-    uint8_t condition = 0x00;
+    PieceMoveCondition condition = 0x00;
     Piece moving = state->placement[move.source];
     Piece target = state->placement[move.target];
     condition |= (target == 0) ? SQUARE_EMPTY : 0x00;
@@ -38,7 +38,7 @@ PieceMoveCondition compute_conditions(PieceMove move, State *state) {
     return condition;
 }
 
-PieceMove generate_piece_legal_piece_moves(int index, State *state) {
+void generate_piece_legal_piece_moves(int index, Array *moves, State *state) {
     Piece piece = state->placement[index];
     int coefficient = (side_of(piece) == SIDE_WHITE) ? 1 : -1;
     Array move_patterns = get_type_move_pattern(type_of(piece));
@@ -54,11 +54,8 @@ PieceMove generate_piece_legal_piece_moves(int index, State *state) {
 
             // For each square along a direction
             for (int step = 1; step <= pattern->max_number_of_steps || pattern->max_number_of_steps == -1; step++) {
-                int current_rank = RANK(index);
-                int current_file = FILE(index);
-
-                current_rank += direction.rank * coefficient * pattern->squares_per_step * step;
-                current_file += direction.file * coefficient * pattern->squares_per_step * step;
+                int current_rank = RANK(index) + direction.rank * coefficient * pattern->squares_per_step * step;
+                int current_file = FILE(index) + direction.file * coefficient * pattern->squares_per_step * step;
 
                 if (current_rank < 0 || current_rank >= 8 || current_file < 0 || current_file >= 8) {
                     break;
@@ -85,7 +82,7 @@ PieceMove generate_piece_legal_piece_moves(int index, State *state) {
                 );
 
                 if (compare_move_conditions(computed_condition, pattern->condition)) {
-                    return (PieceMove){
+                    ((PieceMove*)moves->array)[moves->length++] = (PieceMove){
                         index, 
                         new_index
                     };
@@ -95,7 +92,6 @@ PieceMove generate_piece_legal_piece_moves(int index, State *state) {
             }
         }
     }
-    // SHALL implement and Optional result
 }
 
 void generate_pseudo_legal_moves(Array *moves, State *state) {
@@ -104,8 +100,7 @@ void generate_pseudo_legal_moves(Array *moves, State *state) {
         Piece piece = state->placement[i];
         if (piece == 0) continue;
         if (side_of(piece) != state->active_side) continue;
-        ((PieceMove*)moves->array)[moves->length] = generate_piece_legal_piece_moves(i, state);
-        moves->length++;
+        generate_piece_legal_piece_moves(i, moves, state);
     }
 }
 
