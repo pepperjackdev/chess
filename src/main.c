@@ -1,7 +1,5 @@
 #include <raylib.h>
 
-#include "chess.h"
-
 #include "ui/page.h"
 #include "ui/game_page.h"
 

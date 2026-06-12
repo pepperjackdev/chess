@@ -1,36 +1,7 @@
-#include "chess.h"
+#include "chess/piece_move_generator.h"
 
-#include "io/fen.h"
-#include "utils/array.h"
-
-#include <stdint.h>
+#include "chess/move.h"
 #include <stdio.h>
-#include <stdlib.h>
-
-Piece piece_of(PieceType type, PieceSide side) {
-    return type | side;
-}
-
-PieceType type_of(Piece piece) {
-    return piece & 0b00000111;
-}
-
-PieceSide side_of(Piece piece) {
-    return piece & 0b00001000;
-}
-
-bool compare_piece_moves(PieceMove m1, PieceMove m2) {
-    return m1.source == m2.source && m1.target == m2.target;
-}
-
-void state_create(State *state, char *fen) {
-    parse_fen_into_state(fen, state);
-    state->legal_moves_cache = array_create(sizeof(PieceMove) * CHESS_MAX_NUMBER_OF_MOVES);
-}
-
-void state_delete(State *state) {
-    array_delete(&state->legal_moves_cache);
-}
 
 Array get_type_move_pattern(PieceType type) {
     switch (type) {
@@ -56,7 +27,7 @@ bool compare_move_conditions(PieceMoveCondition m1, PieceMoveCondition m2) {
 }
 
 PieceMoveCondition compute_conditions(PieceMove move, State *state) {
-    uint8_t condition = 0x00;
+    PieceMoveCondition condition = 0x00;
     Piece moving = state->placement[move.source];
     Piece target = state->placement[move.target];
     condition |= (target == 0) ? SQUARE_EMPTY : 0x00;
@@ -67,7 +38,7 @@ PieceMoveCondition compute_conditions(PieceMove move, State *state) {
     return condition;
 }
 
-void generate_piece_legal_piece_moves(Array *moves, int index, State *state) {
+void generate_piece_legal_piece_moves(int index, Array *moves, State *state) {
     Piece piece = state->placement[index];
     int coefficient = (side_of(piece) == SIDE_WHITE) ? 1 : -1;
     Array move_patterns = get_type_move_pattern(type_of(piece));
@@ -83,11 +54,8 @@ void generate_piece_legal_piece_moves(Array *moves, int index, State *state) {
 
             // For each square along a direction
             for (int step = 1; step <= pattern->max_number_of_steps || pattern->max_number_of_steps == -1; step++) {
-                int current_rank = RANK(index);
-                int current_file = FILE(index);
-
-                current_rank += direction.rank * coefficient * pattern->squares_per_step * step;
-                current_file += direction.file * coefficient * pattern->squares_per_step * step;
+                int current_rank = RANK(index) + direction.rank * coefficient * pattern->squares_per_step * step;
+                int current_file = FILE(index) + direction.file * coefficient * pattern->squares_per_step * step;
 
                 if (current_rank < 0 || current_rank >= 8 || current_file < 0 || current_file >= 8) {
                     break;
@@ -114,11 +82,10 @@ void generate_piece_legal_piece_moves(Array *moves, int index, State *state) {
                 );
 
                 if (compare_move_conditions(computed_condition, pattern->condition)) {
-                    ((PieceMove*)moves->array)[moves->length] = (PieceMove){
+                    ((PieceMove*)moves->array)[moves->length++] = (PieceMove){
                         index, 
                         new_index
                     };
-                    moves->length++;
                 }
 
                 if (target_piece != 0) break;
@@ -133,47 +100,17 @@ void generate_pseudo_legal_moves(Array *moves, State *state) {
         Piece piece = state->placement[i];
         if (piece == 0) continue;
         if (side_of(piece) != state->active_side) continue;
-        generate_piece_legal_piece_moves(moves, i, state);
+        generate_piece_legal_piece_moves(i, moves, state);
     }
 }
 
+<<<<<<< HEAD:src/chess.c
 bool under_check_after_move(PieceMove move, State *state) {
     return false; // TODOss
 }
 
+=======
+>>>>>>> reimplementation:src/chess/piece_move_generator.c
 void generate_legal_piece_moves(Array *moves, State *state) {
-    moves->length = 0;
-    PieceMove pseudo_legal_moves[CHESS_MAX_NUMBER_OF_MOVES];
-    Array pseudo_legal_moves_array = ARRAY_FROM_C_ARRAY(pseudo_legal_moves);
-    generate_pseudo_legal_moves(&pseudo_legal_moves_array, state);
-    State local_state;
-    for (int i = 0; i < pseudo_legal_moves_array.length; i++) {
-        local_state = *state;
-        if (!under_check_after_move(pseudo_legal_moves[i], &local_state)) {
-            ((PieceMove*)moves->array)[moves->length++] = pseudo_legal_moves[i];
-        }
-    }    
-}
-
-void submit_piece_move(PieceMove move, State *state) {
-    if (state->legal_moves_cache.length == 0) {
-        generate_legal_piece_moves(&state->legal_moves_cache, state);
-    };
-    
-    for (int i = 0; i < state->legal_moves_cache.length; i++) {
-        if (compare_piece_moves(move, ((PieceMove*)state->legal_moves_cache.array)[i])) {
-            Piece piece = state->placement[move.source];
-            state->placement[move.source] = 0;
-            state->placement[move.target] = piece | FLAG_MOVED;
-            state->active_side ^= SIDE_BLACK;
-            generate_legal_piece_moves(&state->legal_moves_cache, state);
-            return;
-        }
-    }
-}
-
-void submit_move(Move move, State *state) {
-    switch (move.move_type) {
-        case PIECE_MOVE: submit_piece_move(move.move_data.piece_move,  state); break;
-    }
+    generate_pseudo_legal_moves(moves,  state);
 }
