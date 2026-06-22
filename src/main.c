@@ -1,5 +1,6 @@
 #include <raylib.h>
 
+#include "chess/io/fen.h"
 #include "ui/page.h"
 #include "ui/game_page.h"
 
@@ -12,9 +13,9 @@ int main() {
   UnloadImage(sprite_image);
 
   State state;
-  state_create(
-    &state, 
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+  parse_fen_into_state(
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",  
+    &state
   );
 
   GamePage game_page = {
@@ -22,13 +23,10 @@ int main() {
     (Color){0xDA, 0xD7, 0xCD, 0xFF},
     (Color){0xA1, 0x87, 0x68, 0xFF},
     &state,
-    -1 // NOT DRAGGING
+    NOT_DRAGGING
   };
 
-  Page page = {
-    GAME,
-    &game_page
-  };
+  Page page = {GAME, &game_page};
 
   while (!WindowShouldClose()) {
     update_page(page);
@@ -38,8 +36,6 @@ int main() {
     EndDrawing();
   }
 
-  UnloadTexture(sprite_texture);
-  state_delete(&state);
-  
+  UnloadTexture(sprite_texture);  
   CloseWindow();
 }

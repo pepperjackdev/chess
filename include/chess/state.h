@@ -3,7 +3,6 @@
 #include "chess/piece.h"
 
 #include <stdint.h>
-#include "utils/array.h"
 
 typedef uint8_t Board[64];
 
@@ -21,8 +20,4 @@ typedef struct {
   int en_passant_index;
   int halfmove_clock;
   int fullmove_clock;
-  Array legal_moves_cache;
 } State;
-
-void state_create(State *state, char *fen);
-void state_delete(State *state);

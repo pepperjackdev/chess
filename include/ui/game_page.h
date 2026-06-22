@@ -4,6 +4,8 @@
 
 #include "chess/state.h"
 
+# define NOT_DRAGGING -1
+
 typedef struct {
   Texture2D *sprite;
   Color black_square_color;

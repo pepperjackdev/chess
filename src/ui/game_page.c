@@ -1,8 +1,8 @@
 #include "ui/game_page.h"
 
+#include "chess/piece.h"
 #include "chess/state.h"
 #include "chess/move.h"
-#include "chess/piece_move_generator.h"
 
 #include <raylib.h>
 
@@ -19,15 +19,12 @@ void update_game_page(GamePage *game_page) {
   if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
     submit_move(
       (Move){
-        PIECE_MOVE,
-        (PieceMove){
-          game_page->move_source_index,
-          row * 8 + col
-        }
+        PIECE_MOVE, 
+        (PieceMove){game_page->move_source_index, row * 8 + col}
       },
       game_page->state
     );
-    game_page->move_source_index = -1;
+    game_page->move_source_index = NOT_DRAGGING;
   }
 }
 
@@ -59,26 +56,6 @@ void draw_game_page(GamePage *game_page) {
             game_page->white_square_color
       );
 
-      // Highlight target squares...
-      // FIXME: too expensive!
-      generate_legal_piece_moves(
-        &game_page->state->legal_moves_cache, 
-        game_page->state
-      );
-      for (int i = 0; i < game_page->state->legal_moves_cache.length; i++) {
-        PieceMove move = ((PieceMove*)game_page->state->legal_moves_cache.array)[i];
-        if (game_page->move_source_index == -1) break;
-        if (move.source == game_page->move_source_index && move.target == row * 8 + col) {
-          DrawRectangle(
-              col * squareWidth,
-              row * squareHeight,
-              squareWidth,
-              squareHeight, 
-              RED
-          );
-        }
-      }
-
       // Pieces
       Piece piece = game_page->state->placement[row * 8 + col];
       if (piece == 0) continue;
@@ -100,7 +77,7 @@ void draw_game_page(GamePage *game_page) {
   }
 
   // Drawing pieces over the board
-  if (game_page->move_source_index != -1) {
+  if (game_page->move_source_index != NOT_DRAGGING) {
     DrawTexturePro(
       *game_page->sprite, 
       get_piece_sprite(game_page->state->placement[game_page->move_source_index]),
