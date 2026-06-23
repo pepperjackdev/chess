@@ -1,10 +1,10 @@
 #pragma once
 
+#include <stddef.h>
 #include <stdlib.h>
 #include <stdint.h>
 
 #include "chess/state.h"
-#include "utils/array.h"
 
 typedef struct {
   size_t source;
@@ -16,31 +16,52 @@ typedef struct {
   int delta_rank;
 } Direction;
 
-#define NORTH            (Direction){0, -1}
-#define NORTH_NORTH_EAST (Direction){1, -2}
-#define NORTH_EAST       (Direction){1, -1}
-#define EAST_NORTH_EAST  (Direction){2, -1}
-#define EAST             (Direction){1, 0}
-#define EAST_SOUTH_EAST  (Direction){2, 1}
-#define SOUTH_EAST       (Direction){1, 1}
-#define SOUTH_SOUTH_EAST (Direction){1, 2}
-#define SOUTH            (Direction){0, 1}
-#define SOUTH_SOUTH_WEST (Direction){-1, 2}
-#define SOUTH_WEST       (Direction){-1, 1}
-#define WEST_SOUTH_WEST  (Direction){-2, 1}
-#define WEST             (Direction){-1, 0}
-#define WEST_NORTH_WEST  (Direction){-2, -1}
-#define NORTH_WEST       (Direction){-1, -1}
-#define NORTH_NORTH_WEST (Direction){-1, -2}
+typedef enum : size_t {
+  NORTH,
+  NORTH_NORTH_EAST,
+  NORTH_EAST,       
+  EAST_NORTH_EAST,
+  EAST, 
+  EAST_SOUTH_EAST,
+  SOUTH_EAST, 
+  SOUTH_SOUTH_EAST,
+  SOUTH,
+  SOUTH_SOUTH_WEST,
+  SOUTH_WEST,
+  WEST_SOUTH_WEST,
+  WEST,  
+  WEST_NORTH_WEST,  
+  NORTH_WEST, 
+  NORTH_NORTH_WEST 
+} DirectionIndex;
 
-typedef enum : uint8_t { _ } PieceMoveCondition;
+static const Direction DIRECTIONS[] = {
+  [NORTH]            = {0, -1},
+  [NORTH_NORTH_EAST] = {1, -2},
+  [NORTH_EAST]       = {1, -1},
+  [EAST_NORTH_EAST]  = {2, -1},
+  [EAST]             = {1, 0},
+  [EAST_SOUTH_EAST]  = {2, 1},
+  [SOUTH_EAST]       = {1, 1},
+  [SOUTH_SOUTH_EAST] = {1, 2},
+  [SOUTH]            = {0, 1},
+  [SOUTH_SOUTH_WEST] = {-1, 2},
+  [SOUTH_WEST]       = {-1, 1},
+  [WEST_SOUTH_WEST]  = {-2, 1},
+  [WEST]             = {-1, 0},
+  [WEST_NORTH_WEST]  = {-2, -1},
+  [NORTH_WEST]       = {-1, -1},
+  [NORTH_NORTH_WEST] = {-1, -2},
+};
+
+typedef void* PieceMoveCondition;
 
 typedef struct {
-  Array directions;
+  uint16_t directions;
   int max_squares;
   int squares_per_step;
   int max_steps;
-
+  PieceMoveCondition condition;
 } PieceMovePattern;
 
 bool compare_piece_move(PieceMove m1, PieceMove m2);
@@ -48,6 +69,7 @@ bool compare_piece_move(PieceMove m1, PieceMove m2);
 bool there_is_check(PieceSide side, State *state);
 bool there_is_checkmate(PieceSide side, State *state);
 
-bool piece_move_matches_pattern(PieceMove move, PieceMovePattern pattern);
+bool is_piece_move_pseudo_legal(PieceMove move, State *state);
+bool is_piece_move_legal(PieceMove move, State *state);
 
 void submit_piece_move(PieceMove move, State *state);
