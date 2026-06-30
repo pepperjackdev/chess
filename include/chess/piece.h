@@ -5,7 +5,6 @@
 typedef uint8_t Piece;
 
 typedef enum : uint8_t {
-  TYPE_NULL   = 0b00000000,
   TYPE_KING   = 0b00000001,
   TYPE_QUEEN  = 0b00000010,
   TYPE_BISHOP = 0b00000011,
@@ -22,6 +21,8 @@ typedef enum : uint8_t {
 typedef enum : uint8_t {
   FLAG_MOVED = 0b00010000,
 } PieceFlags;
+
+static Piece NULL_PIECE = 0;
 
 Piece piece_of(PieceType type, PieceSide side);
 PieceType type_of(Piece piece);
