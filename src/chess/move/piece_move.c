@@ -4,13 +4,13 @@
 #include "chess/state.h"
 
 bool compare_piece_move(PieceMove m1, PieceMove m2) {
-    return m1.source == m2.source && m1.target == m2.target;
+    return m1.from == m2.from && m1.to == m2.to;
 }
 
 void apply_piece_move(PieceMove move, State *state) {
-    Piece moving = state->placement[move.source];
-    state->placement[move.source] = 0;
-    state->placement[move.target] = moving | FLAG_MOVED;
+    Piece moving = state->placement[move.from];
+    state->placement[move.from] = 0;
+    state->placement[move.to] = moving | FLAG_MOVED;
     state->active_side = (state->active_side == SIDE_WHITE) ? SIDE_BLACK : SIDE_WHITE;
 }
 
