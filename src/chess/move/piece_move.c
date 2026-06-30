@@ -18,24 +18,7 @@ bool is_piece_move_pseudo_legal(PieceMove move, State *state) {
     return true;
 }
 
-bool there_is_check(PieceSide side, State *state) {
-    //  PieceMove move = {.source = 0};
-    //  // locating king (target)
-    //  for (int i = 0; i < 64; i++) {
-    //      Piece current = state->placement[i];
-    //      if (type_of(current) == TYPE_KING && side_of(current) == side) {
-    //          move.target = i;
-    //      }
-    //  }
-    //  // looking for checks
-    //  for (; move.source < 64; move.source++) {
-    //      Piece moving = state->placement[move.source];
-    //      if (side_of(moving) == side) continue;
-    //      if (is_piece_move_pseudo_legal(move, state)) return true;
-    //  }
-    //  return false;
-
-    // FIXME: provide effective implementation
+bool is_side_under_check(PieceSide side, State *state) {
     return false;
 }
 
@@ -43,7 +26,7 @@ bool is_piece_move_legal(PieceMove move, State *state) {
     if (!is_piece_move_pseudo_legal(move, state)) return false;
     State future_state = *state;
     apply_piece_move(move, &future_state);
-    return !there_is_check(state->active_side, &future_state);
+    return !is_side_under_check(state->active_side, &future_state);
 }
 
 void submit_piece_move(PieceMove move, State *state) {

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stddef.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -11,31 +10,33 @@ typedef struct {
   size_t target;
 } PieceMove;
 
+bool compare_piece_move(PieceMove m1, PieceMove m2);
+
 typedef struct {
   int delta_file;
   int delta_rank;
-} Direction;
+} MoveVector;
 
-typedef enum : size_t {
+enum MoveVectorsIndex: size_t {
   NORTH,
   NORTH_NORTH_EAST,
-  NORTH_EAST,       
+  NORTH_EAST,
   EAST_NORTH_EAST,
-  EAST, 
+  EAST,
   EAST_SOUTH_EAST,
-  SOUTH_EAST, 
+  SOUTH_EAST,
   SOUTH_SOUTH_EAST,
   SOUTH,
   SOUTH_SOUTH_WEST,
   SOUTH_WEST,
   WEST_SOUTH_WEST,
-  WEST,  
-  WEST_NORTH_WEST,  
-  NORTH_WEST, 
-  NORTH_NORTH_WEST 
-} DirectionIndex;
+  WEST,
+  WEST_NORTH_WEST,
+  NORTH_WEST,
+  NORTH_NORTH_WEST
+};
 
-static const Direction DIRECTIONS[] = {
+static MoveVector MOVE_VECTORS[] = {
   [NORTH]            = {0, -1},
   [NORTH_NORTH_EAST] = {1, -2},
   [NORTH_EAST]       = {1, -1},
@@ -54,20 +55,15 @@ static const Direction DIRECTIONS[] = {
   [NORTH_NORTH_WEST] = {-1, -2},
 };
 
-typedef void* PieceMoveCondition;
-
 typedef struct {
-  uint16_t directions;
-  int max_squares;
+  uint8_t move_vector_bitmap;
   int squares_per_step;
   int max_steps;
-  PieceMoveCondition condition;
-} PieceMovePattern;
+  void *conditions; // FIXME: how should conditions be handled?
+} MovePattern;
 
-bool compare_piece_move(PieceMove m1, PieceMove m2);
-
-bool there_is_check(PieceSide side, State *state);
-bool there_is_checkmate(PieceSide side, State *state);
+bool is_side_under_check(PieceSide side, State *state);
+bool is_side_under_checkmate(PieceSide side, State *state);
 
 bool is_piece_move_pseudo_legal(PieceMove move, State *state);
 bool is_piece_move_legal(PieceMove move, State *state);
