@@ -1,5 +1,6 @@
 #include <raylib.h>
 
+#include "chess/state.h"
 #include "chess/io/fen.h"
 #include "ui/page.h"
 #include "ui/game_page.h"
@@ -32,7 +33,7 @@ int main() {
     update_page(page);
     BeginDrawing();
       ClearBackground(RAYWHITE);
-      draw_page(page);
+      render_page(page);
     EndDrawing();
   }
 

@@ -17,6 +17,7 @@ void update_game_page(GamePage *game_page) {
   }
 
   if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+    if (game_page->move_source_index == NOT_DRAGGING) return;
     submit_move(
       (Move){
         PIECE_MOVE, 
@@ -29,8 +30,8 @@ void update_game_page(GamePage *game_page) {
 }
 
 Rectangle get_piece_sprite(Piece piece) {
-  int row = (side_of(piece) == SIDE_WHITE) ? 0 : 1;
-  int col = type_of(piece) - 1;
+  int row = (piece_get_side(piece) == PIECE_SIDE_WHITE) ? 0 : 1;
+  int col = piece_get_type(piece) - 1;
   return (Rectangle){
     col * 320,
     row * 320,
@@ -39,7 +40,7 @@ Rectangle get_piece_sprite(Piece piece) {
   };
 };
 
-void draw_game_page(GamePage *game_page) {
+void render_game_page(GamePage *game_page) {
   float squareWidth = GetScreenWidth() / 8.0f;
   float squareHeight = GetScreenHeight() / 8.0f;
 

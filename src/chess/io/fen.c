@@ -13,39 +13,34 @@ void parse_fen_into_board(char *fen, int index, State *state) {
 
         char symbol = fen[fen_index];
 
-        // End of Rank
         if (symbol == '/') {
             rank++;
             file = 0;
             continue;
         }
         
-        // Empty spaces
         if (symbol >= '1' && symbol <= '8') {
             file += symbol - '0';
             continue;
         }
 
-        // Piece
-
-        // Determining piece
         PieceType type = 0;
-        PieceSide side = SIDE_WHITE;
+        PieceSide side = PIECE_SIDE_WHITE;
 
         switch (symbol) {
-            case 'P': side = SIDE_WHITE; type = TYPE_PAWN;   break;
-            case 'N': side = SIDE_WHITE; type = TYPE_KNIGHT; break;
-            case 'B': side = SIDE_WHITE; type = TYPE_BISHOP; break;
-            case 'R': side = SIDE_WHITE; type = TYPE_ROOK;   break;
-            case 'Q': side = SIDE_WHITE; type = TYPE_QUEEN;  break;
-            case 'K': side = SIDE_WHITE; type = TYPE_KING;   break;
+            case 'P': side = PIECE_SIDE_WHITE; type = PIECE_TYPE_PAWN;   break;
+            case 'N': side = PIECE_SIDE_WHITE; type = PIECE_TYPE_KNIGHT; break;
+            case 'B': side = PIECE_SIDE_WHITE; type = PIECE_TYPE_BISHOP; break;
+            case 'R': side = PIECE_SIDE_WHITE; type = PIECE_TYPE_ROOK;   break;
+            case 'Q': side = PIECE_SIDE_WHITE; type = PIECE_TYPE_QUEEN;  break;
+            case 'K': side = PIECE_SIDE_WHITE; type = PIECE_TYPE_KING;   break;
 
-            case 'p': side = SIDE_BLACK; type = TYPE_PAWN;   break;
-            case 'n': side = SIDE_BLACK; type = TYPE_KNIGHT; break;
-            case 'b': side = SIDE_BLACK; type = TYPE_BISHOP; break;
-            case 'r': side = SIDE_BLACK; type = TYPE_ROOK;   break;
-            case 'q': side = SIDE_BLACK; type = TYPE_QUEEN;  break;
-            case 'k': side = SIDE_BLACK; type = TYPE_KING;   break;
+            case 'p': side = PIECE_SIDE_BLACK; type = PIECE_TYPE_PAWN;   break;
+            case 'n': side = PIECE_SIDE_BLACK; type = PIECE_TYPE_KNIGHT; break;
+            case 'b': side = PIECE_SIDE_BLACK; type = PIECE_TYPE_BISHOP; break;
+            case 'r': side = PIECE_SIDE_BLACK; type = PIECE_TYPE_ROOK;   break;
+            case 'q': side = PIECE_SIDE_BLACK; type = PIECE_TYPE_QUEEN;  break;
+            case 'k': side = PIECE_SIDE_BLACK; type = PIECE_TYPE_KING;   break;
 
             default:
                 fprintf(stderr, 
@@ -53,10 +48,9 @@ void parse_fen_into_board(char *fen, int index, State *state) {
                 continue;
         }
 
-        // Loading determined piece into board
         if (type != 0 && file < 8) {
             int square = rank * 8 + file;
-            state->placement[square] = piece_of(type, side);
+            state->placement[square] = piece_new(type, side);
             file++;
         }
     }
@@ -65,8 +59,8 @@ void parse_fen_into_board(char *fen, int index, State *state) {
 void parse_fen_into_active_color(char *fen, int index, State *state) {
     PieceSide active_color;
     switch (fen[index]) {
-        case 'w': active_color = SIDE_WHITE; break;
-        case 'b': active_color = SIDE_BLACK; break;
+        case 'w': active_color = PIECE_SIDE_WHITE; break;
+        case 'b': active_color = PIECE_SIDE_BLACK; break;
         
         default:
             fprintf(stderr,

@@ -11,5 +11,5 @@ typedef struct {
   void *page_data;
 } Page;
 
-void draw_page(Page page);
+void render_page(Page page);
 void update_page(Page page);

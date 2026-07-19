@@ -10,10 +10,10 @@ void update_page(Page page) {
   }
 }
 
-void draw_page(Page page) {
+void render_page(Page page) {
   switch (page.page_type) {
     case GAME:
-      draw_game_page((GamePage*)page.page_data);
+      render_game_page((GamePage*)page.page_data);
       break;
   }
 }

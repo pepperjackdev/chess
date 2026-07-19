@@ -10,8 +10,8 @@ bool compare_piece_move(PieceMove m1, PieceMove m2) {
 void apply_piece_move(PieceMove move, State *state) {
     Piece moving = state->placement[move.from];
     state->placement[move.from] = 0;
-    state->placement[move.to] = moving | FLAG_MOVED;
-    state->active_side = (state->active_side == SIDE_WHITE) ? SIDE_BLACK : SIDE_WHITE;
+    state->placement[move.to] = moving | PIECE_FLAG_MOVED;
+    state->active_side = (state->active_side == PIECE_SIDE_WHITE) ? PIECE_SIDE_BLACK : PIECE_SIDE_WHITE;
 }
 
 bool is_piece_move_pseudo_legal(PieceMove move, State *state) {

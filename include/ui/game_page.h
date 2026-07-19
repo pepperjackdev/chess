@@ -15,4 +15,4 @@ typedef struct {
 } GamePage;
 
 void update_game_page(GamePage *game_page);
-void draw_game_page(GamePage *game_page);
+void render_game_page(GamePage *game_page);
