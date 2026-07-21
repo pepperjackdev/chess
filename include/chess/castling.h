@@ -1,0 +1,10 @@
+#pragma once
+
+#include <stdint.h>
+
+typedef enum : uint8_t {
+  CASTLING_BLACK_KING_SIDE  = 0b00000001,
+  CASTLING_BLACK_QUEEN_SIDE = 0b00000010,
+  CASTLING_WHITE_KING_SIDE  = 0b00000100,
+  CASTLING_WHITE_QUEEN_SIDE = 0b00001000,
+} Castling;

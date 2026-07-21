@@ -1,25 +1,75 @@
 cmake_minimum_required(VERSION 3.31)
-project(chess C)
+
+project(chess LANGUAGES C)
 
 set(CMAKE_C_STANDARD 23)
-set(CMAKE_C_STANDARD_REQUIRED True)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
-find_package(PkgConfig REQUIRED) 
+if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+endif()
 
-file(GLOB_RECURSE SRC_FILES 
-  "src/*.c" 
-  "src/**/*.c"
-)
-add_executable(chess ${SRC_FILES})
-
-target_compile_options(chess PRIVATE -fsanitize=address -g)
-target_link_options(chess PRIVATE -fsanitize=address)
-
+find_package(PkgConfig REQUIRED)
 pkg_check_modules(RAYLIB REQUIRED IMPORTED_TARGET raylib)
 
-target_include_directories(chess PRIVATE include)
+file(GLOB_RECURSE CHESS_SOURCES CONFIGURE_DEPENDS
+    "src/chess/*.c"
+)
 
-target_link_libraries(chess PRIVATE
+file(GLOB_RECURSE UI_SOURCES CONFIGURE_DEPENDS
+    "src/ui/*.c"
+)
+
+
+add_library(chess_engine STATIC
+    ${CHESS_SOURCES}
+)
+
+target_include_directories(chess_engine
+    PUBLIC
+        include
+)
+
+target_compile_options(chess_engine PRIVATE
+    $<$<CONFIG:Debug>:-fsanitize=address;-g>
+)
+
+target_link_options(chess_engine PRIVATE
+    $<$<CONFIG:Debug>:-fsanitize=address>
+)
+
+
+add_executable(gui
+    src/apps/gui.c
+    ${UI_SOURCES}
+)
+
+target_link_libraries(gui PRIVATE
+    chess_engine
     PkgConfig::RAYLIB
+)
+
+target_compile_options(gui PRIVATE
+    $<$<CONFIG:Debug>:-fsanitize=address;-g>
+)
+
+target_link_options(gui PRIVATE
+    $<$<CONFIG:Debug>:-fsanitize=address>
+)
+
+
+add_executable(perft
+    src/apps/perft.c
+)
+
+target_link_libraries(perft PRIVATE
+    chess_engine
+)
+
+target_compile_options(perft PRIVATE
+    $<$<CONFIG:Debug>:-fsanitize=address;-g>
+)
+
+target_link_options(perft PRIVATE
+    $<$<CONFIG:Debug>:-fsanitize=address>
 )

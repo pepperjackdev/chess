@@ -23,6 +23,8 @@ typedef enum : Piece {
   PIECE_FLAG_MOVED = 0b00010000,
 } PieceFlags;
 
+#define NULL_PIECE 0x00
+
 Piece piece_new(PieceType type, PieceSide side);
 PieceType piece_get_type(Piece piece);
 PieceSide piece_get_side(Piece piece);

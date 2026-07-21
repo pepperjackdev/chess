@@ -70,7 +70,7 @@ void parse_fen_into_active_color(char *fen, int index, State *state) {
 }
 
 void parse_fen_into_castling_availability(char *fen, int index, State *state) {
-    CastlingRights castling = 0x00;
+    Castling castling = 0x00;
     if (fen[index] != '-') {
         for (int i = index; fen[i] != ' '; i++) {
             switch (fen[i]) {
@@ -84,7 +84,7 @@ void parse_fen_into_castling_availability(char *fen, int index, State *state) {
             }
         }
     }
-    state->castling_rights = castling;
+    state->castling = castling;
 }
 
 void parse_fen_into_en_passant_target_square(char *fen, int index, State *state) {

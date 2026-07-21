@@ -1,5 +1,6 @@
 #pragma once
 
+#include "chess/piece.h"
 #include "chess/state.h"
 #include "chess/move/piece_move.h"
 
@@ -14,6 +15,7 @@ union Move {
 };
 
 typedef struct {
+  PieceSide actor;
   enum MoveType move_type;
   union Move move_data;
 } Move;

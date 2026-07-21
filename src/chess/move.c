@@ -4,6 +4,6 @@
 
 void submit_move(Move move, State *state) {
     switch (move.move_type) {
-        case PIECE_MOVE: submit_piece_move(move.move_data.piece_move, state); break;
+        case PIECE_MOVE: submit_piece_move(move.actor, move.move_data.piece_move, state); break;
     }
 }

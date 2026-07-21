@@ -10,4 +10,4 @@ typedef struct {
   size_t to;
 } PieceMove;
 
-void submit_piece_move(PieceMove move, State *state);
+void submit_piece_move(PieceSide actor, PieceMove move, State *state);

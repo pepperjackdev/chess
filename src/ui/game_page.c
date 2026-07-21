@@ -1,6 +1,7 @@
 #include "ui/game_page.h"
 
 #include "chess/piece.h"
+#include "chess/placement.h"
 #include "chess/state.h"
 #include "chess/move.h"
 
@@ -11,7 +12,7 @@ void update_game_page(GamePage *game_page) {
   int row = GetMouseY() / (GetScreenHeight() / 8);
   
   if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-    if (game_page->state->placement[row * 8 + col] != 0) {
+    if (placement_get_piece(&game_page->state->placement, row * 8 + col) != 0) {
       game_page->move_source_index = row * 8 + col;
     }
   }
@@ -20,6 +21,7 @@ void update_game_page(GamePage *game_page) {
     if (game_page->move_source_index == NOT_DRAGGING) return;
     submit_move(
       (Move){
+        game_page->state->active_side,
         PIECE_MOVE, 
         (PieceMove){game_page->move_source_index, row * 8 + col}
       },
@@ -58,7 +60,7 @@ void render_game_page(GamePage *game_page) {
       );
 
       // Pieces
-      Piece piece = game_page->state->placement[row * 8 + col];
+      Piece piece = placement_get_piece(&game_page->state->placement, row * 8 + col);
       if (piece == 0) continue;
       DrawTexturePro(
         *game_page->sprite, 
@@ -81,7 +83,10 @@ void render_game_page(GamePage *game_page) {
   if (game_page->move_source_index != NOT_DRAGGING) {
     DrawTexturePro(
       *game_page->sprite, 
-      get_piece_sprite(game_page->state->placement[game_page->move_source_index]),
+      get_piece_sprite(placement_get_piece(
+        &game_page->state->placement, 
+        game_page->move_source_index)
+      ),
       (Rectangle){
         GetMouseX() - squareWidth / 2,
         GetMouseY() - squareHeight / 2,
