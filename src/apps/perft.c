@@ -28,5 +28,5 @@ int main(int argc, char** argv) {
     // FIXME: perform perft as test
     State state;
     parse_fen_into_state("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", &state);
-    printf("Perft: %lu\n", perft(&state, 6));
+    printf("Perft: %lu\n", perft(&state, 4));
 }

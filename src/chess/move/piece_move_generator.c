@@ -6,12 +6,28 @@
 #include "chess/placement.h"
 #include "chess/utils/tuple.h"
 
+Conditions compute_conditions(
+    State *state, 
+    PieceMove piece_move
+) {
+    Conditions conditions = 0;
+    Piece moving_piece = placement_get_piece(&state->placement, piece_move.from);
+    Piece target_piece = placement_get_piece(&state->placement, piece_move.to);
+    if (target_piece == NULL_PIECE) conditions |= SQUARE_EMPTY;
+    if (target_piece != NULL_PIECE && piece_get_side(target_piece) != state->active_side) conditions |= SQUARE_ENEMY;
+    if (target_piece == NULL_PIECE || piece_get_side(target_piece) != state->active_side) conditions |= SQUARE_NOT_ALLY;
+    if (piece_move.to == state->en_passant_index) conditions |= SQUARE_EN_PASSANT;
+    if (moving_piece != NULL_PIECE && !(moving_piece & PIECE_FLAG_MOVED)) conditions |= PIECE_NEVER_MOVED;
+    return conditions;
+}
+
+
 bool evaluate_conditions(
     State *state, 
     PieceMove piece_move, 
     Conditions conditions
 ) {
-    return true; // FIXME
+    return (conditions & compute_conditions(state, piece_move)) == conditions;
 }
 
 const size_t STANDARD_DIRECTIONS_COUNT = 16;
@@ -37,7 +53,12 @@ const Direction STANDARD_DIRECTIONS[] = {
 PatternSet get_piece_pattern_set(PieceType piece_type) {
     PatternSet pattern_set;
     switch (piece_type) {
-        case PIECE_TYPE_PAWN: pattern_set = PAWN_PATTERN_SET; break;
+        case PIECE_TYPE_PAWN:   pattern_set = PAWN_PATTERN_SET;     break;
+        case PIECE_TYPE_KNIGHT: pattern_set = KNIGHT_PATTERN_SET;   break;
+        case PIECE_TYPE_BISHOP: pattern_set = BISHOP_PATTERN_SET;   break;
+        case PIECE_TYPE_ROOK:   pattern_set = ROOK_PATTERN_SET;     break;
+        case PIECE_TYPE_QUEEN:  pattern_set = QUEEN_PATTERN_SET;    break;
+        case PIECE_TYPE_KING:   pattern_set = KING_PATTERN_SET;     break;
         default:
             pattern_set = EMPTY_PATTERN_SET;
     }
@@ -56,12 +77,17 @@ int generate_pseudo_legal_moves(State *state, PieceMove *move_list) {
                     if (!((0b1 << k) & pattern.directions)) continue;
                     Direction direction = STANDARD_DIRECTIONS[k];
                     Tuple2 target = index_to_tuple2(i);
-                    for (int s = 1; s <= pattern.steps; s++) {
-                        target = tuple2_add(target, tuple2_scale(direction, pattern.squares_per_step));
-                        if (!tuple2_in_range((Tuple2){0, 0}, target, (Tuple2){7, 7})) continue;
+                    for (int s = 1; s <= pattern.steps | pattern.steps == -1; s++) {
+                        int direction_coefficient = (piece_get_side(piece) == PIECE_SIDE_BLACK) ? 1 : -1;
+                        target = tuple2_add(target, tuple2_scale(
+                            direction, 
+                            pattern.squares_per_step * direction_coefficient
+                        ));
+                        if (!tuple2_in_range((Tuple2){0, 0}, target, (Tuple2){7, 7})) break;;
                         PieceMove piece_move = {i, tuple2_to_index(target)};
                         if (!evaluate_conditions(state, piece_move, pattern.conditions)) break;
                         move_list[move_list_count++] = piece_move;
+                        if (placement_get_piece(&state->placement, piece_move.to) != NULL_PIECE) break;
                     }
                 }
             }

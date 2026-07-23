@@ -1,9 +1,11 @@
 #include "ui/game_page.h"
 
+#include "chess/move/piece_move_generator.h"
 #include "chess/piece.h"
 #include "chess/placement.h"
 #include "chess/state.h"
 #include "chess/move.h"
+#include "chess/utils/tuple.h"
 
 #include <raylib.h>
 
@@ -46,17 +48,37 @@ void render_game_page(GamePage *game_page) {
   float squareWidth = GetScreenWidth() / 8.0f;
   float squareHeight = GetScreenHeight() / 8.0f;
 
+  PieceMove move_list[256];
+  int move_list_count = generate_legal_moves(game_page->state, move_list);
+
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
+      bool red_flag = false;
+      if (game_page->move_source_index != NOT_DRAGGING) {
+        for (int i = 0; i < move_list_count; i++) {
+          if (move_list[i].to == tuple2_to_index((Tuple2){col, row}) && 
+            move_list[i].from == game_page->move_source_index) {
+            red_flag = true;
+          }
+        }
+      }
       // Squares
       DrawRectangle(
           col * squareWidth,
           row * squareHeight,
           squareWidth,
           squareHeight, 
-          ((row + col) % 2 == 0) ? 
+          (red_flag) ? RED : ((row + col) % 2 == 0) ? 
             game_page->black_square_color : 
             game_page->white_square_color
+      );
+
+      DrawText(
+        TextFormat("%d", tuple2_to_index((Tuple2){col, row})),
+        col * squareWidth,
+        row * squareHeight,
+        20,
+        BLACK
       );
 
       // Pieces

@@ -11,6 +11,7 @@ bool compare_piece_move(PieceMove m1, PieceMove m2) {
 
 void make_piece_move(PieceMove move, State *state) {
     Piece moving = placement_get_piece(&state->placement, move.from);
+    moving |= PIECE_FLAG_MOVED;
     placement_set_piece(&state->placement, move.from, NULL_PIECE);
     placement_set_piece(&state->placement, move.to, moving);
     state->active_side = (state->active_side == PIECE_SIDE_WHITE) ? 

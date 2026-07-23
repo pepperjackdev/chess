@@ -1,7 +1,7 @@
 #include "chess/utils/tuple.h"
 
 Tuple2 index_to_tuple2(int index) {
-    return (Tuple2){index / 8, index % 8};
+    return (Tuple2){index % 8, index / 8};
 }
 
 int tuple2_to_index(Tuple2 t) {
@@ -9,7 +9,7 @@ int tuple2_to_index(Tuple2 t) {
 }
 
 Tuple2 tuple2_add(Tuple2 t1, Tuple2 t2) {
-    return (Tuple2){t1.x + t2.x, t2.y + t2.y};
+    return (Tuple2){t1.x + t2.x, t1.y + t2.y};
 }
 
 Tuple2 tuple2_scale(Tuple2 t, int scale) {

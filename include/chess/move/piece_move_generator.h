@@ -34,7 +34,7 @@ typedef enum : uint16_t {
 typedef enum : uint8_t {
     SQUARE_EMPTY            = 0b1 << 0,
     SQUARE_ENEMY            = 0b1 << 1,
-    SQUARE_EMPTY_OR_ENEMY   = 0b1 << 2,
+    SQUARE_NOT_ALLY         = 0b1 << 2,
     SQUARE_EN_PASSANT       = 0b1 << 3,
     PIECE_NEVER_MOVED       = 0b1 << 4,
 } Conditions;
@@ -45,6 +45,8 @@ typedef struct {
     int steps;
     Conditions conditions;
 } Pattern;
+
+#define PATTERN_STEPS_UNLIMITED (-1)
 
 typedef struct {
     const Pattern *patterns;
