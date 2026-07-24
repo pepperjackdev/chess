@@ -12,6 +12,10 @@ Tuple2 tuple2_add(Tuple2 t1, Tuple2 t2) {
     return (Tuple2){t1.x + t2.x, t1.y + t2.y};
 }
 
+Tuple2 tuple2_subtract(Tuple2 t1, Tuple2 t2) {
+    return (Tuple2){t1.x - t2.x, t1.y - t2.y};
+}
+
 Tuple2 tuple2_scale(Tuple2 t, int scale) {
     return (Tuple2){t.x * scale, t.y * scale};
 }

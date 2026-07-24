@@ -29,7 +29,7 @@ typedef enum : uint16_t {
     WNW = 0b1 << 13,
     NW  = 0b1 << 14,
     NNW = 0b1 << 15
-} Directions;
+} DirectionFlag;
 
 typedef enum : uint8_t {
     SQUARE_EMPTY            = 0b1 << 0,
@@ -37,13 +37,14 @@ typedef enum : uint8_t {
     SQUARE_NOT_ALLY         = 0b1 << 2,
     SQUARE_EN_PASSANT       = 0b1 << 3,
     PIECE_NEVER_MOVED       = 0b1 << 4,
-} Conditions;
+} ConditionFlag;
 
 typedef struct {
-    Directions directions;
+    DirectionFlag directions;
     int squares_per_step;
     int steps;
-    Conditions conditions;
+    ConditionFlag conditions;
+    PieceMoveFlag piece_move_flags;
 } Pattern;
 
 #define PATTERN_STEPS_UNLIMITED (-1)
@@ -64,4 +65,5 @@ typedef struct {
 
 DEF_PATTERN_SET(EMPTY, );
 
+bool piece_move_matches_pattern(PieceMove piece_move, Pattern pattern);
 int generate_legal_moves(State *state, PieceMove *move_list);

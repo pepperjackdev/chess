@@ -4,13 +4,14 @@
 #include "chess/move/patterns/standard_chess_patterns.h"
 #include "chess/piece.h"
 #include "chess/placement.h"
+#include "chess/state.h"
 #include "chess/utils/tuple.h"
 
-Conditions compute_conditions(
+ConditionFlag compute_conditions(
     State *state, 
     PieceMove piece_move
 ) {
-    Conditions conditions = 0;
+    ConditionFlag conditions = 0;
     Piece moving_piece = placement_get_piece(&state->placement, piece_move.from);
     Piece target_piece = placement_get_piece(&state->placement, piece_move.to);
     if (target_piece == NULL_PIECE) conditions |= SQUARE_EMPTY;
@@ -25,7 +26,7 @@ Conditions compute_conditions(
 bool evaluate_conditions(
     State *state, 
     PieceMove piece_move, 
-    Conditions conditions
+    ConditionFlag conditions
 ) {
     return (conditions & compute_conditions(state, piece_move)) == conditions;
 }
@@ -65,6 +66,24 @@ PatternSet get_piece_pattern_set(PieceType piece_type) {
     return pattern_set;
 }
 
+PieceMoveFlag compute_piece_move_flags(State *state, PieceMove piece_move) {
+    PieceMoveFlag flags;
+    Piece moving = placement_get_piece(&state->placement, piece_move.from);
+    Piece target = placement_get_piece(&state->placement, piece_move.to);
+    if (target == NULL_PIECE && piece_get_type(moving) != PIECE_TYPE_PAWN) flags |= PIECE_MOVE_IS_REVERSIBLE;
+    else flags |= PIECE_MOVE_IS_NOT_REVERSIBLE;
+    if (piece_get_type(moving) == PIECE_TYPE_KING) flags |= PIECE_MOVE_DISABLES_CASTLING_KING | PIECE_MOVE_DISABLES_CASTLING_QUEEN;
+    if (piece_get_type(moving) == PIECE_TYPE_ROOK) {
+        if (piece_move.from == 0 || piece_move.from == 56) flags |= PIECE_MOVE_DISABLES_CASTLING_QUEEN;
+        if (piece_move.from == 7 || piece_move.from == 63) flags |= PIECE_MOVE_DISABLES_CASTLING_KING;
+    }
+    if (piece_get_type(moving) == PIECE_TYPE_PAWN) {
+        Tuple2 target_position = index_to_tuple2(piece_move.to);
+        if (target_position.y == 0 || target_position.y == 7) flags |= PIECE_MOVE_IMPLIES_PROMOTION;
+    }
+    return flags;
+}
+
 int generate_pseudo_legal_moves(State *state, PieceMove *move_list) {
     int move_list_count = 0;
     for (int i = 0; i < 64; i++) {
@@ -77,14 +96,13 @@ int generate_pseudo_legal_moves(State *state, PieceMove *move_list) {
                     if (!((0b1 << k) & pattern.directions)) continue;
                     Direction direction = STANDARD_DIRECTIONS[k];
                     Tuple2 target = index_to_tuple2(i);
-                    for (int s = 1; s <= pattern.steps | pattern.steps == -1; s++) {
+                    for (int s = 1; s <= pattern.steps | pattern.steps == PATTERN_STEPS_UNLIMITED; s++) {
                         int direction_coefficient = (piece_get_side(piece) == PIECE_SIDE_BLACK) ? 1 : -1;
-                        target = tuple2_add(target, tuple2_scale(
-                            direction, 
-                            pattern.squares_per_step * direction_coefficient
-                        ));
-                        if (!tuple2_in_range((Tuple2){0, 0}, target, (Tuple2){7, 7})) break;;
-                        PieceMove piece_move = {i, tuple2_to_index(target)};
+                        target = tuple2_add(target, tuple2_scale(direction, 
+                            pattern.squares_per_step * direction_coefficient));
+                        if (!tuple2_in_range((Tuple2){0, 0}, target, (Tuple2){7, 7})) break;
+                        PieceMove piece_move = {i, tuple2_to_index(target), pattern.piece_move_flags};
+                        piece_move.flags |= compute_piece_move_flags(state, piece_move);
                         if (!evaluate_conditions(state, piece_move, pattern.conditions)) break;
                         move_list[move_list_count++] = piece_move;
                         if (placement_get_piece(&state->placement, piece_move.to) != NULL_PIECE) break;
