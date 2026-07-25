@@ -56,7 +56,7 @@ void render_game_page(GamePage *game_page) {
       bool red_flag = false;
       if (game_page->move_source_index != NOT_DRAGGING) {
         for (int i = 0; i < move_list_count; i++) {
-          if (move_list[i].to == tuple2_to_index((Tuple2){col, row}) && 
+          if (move_list[i].to == t2toi((Tuple2){col, row}) && 
             move_list[i].from == game_page->move_source_index) {
             red_flag = true;
           }
@@ -74,7 +74,7 @@ void render_game_page(GamePage *game_page) {
       );
 
       DrawText(
-        TextFormat("%d", tuple2_to_index((Tuple2){col, row})),
+        TextFormat("%d", t2toi((Tuple2){col, row})),
         col * squareWidth,
         row * squareHeight,
         20,
@@ -119,5 +119,20 @@ void render_game_page(GamePage *game_page) {
       0.0f, 
       RAYWHITE
     );
+  }
+
+  // State Info
+  if (IsKeyDown(KEY_LEFT_SHIFT)) {
+    DrawRectangle(100, 100, 760, 760, GRAY);
+    DrawText(TextFormat("Active color: %s", 
+      game_page->state->active_side == PIECE_SIDE_WHITE ? "white" : "black"), 200, 200, 30, WHITE);
+    DrawText(TextFormat("Castling: %b",
+      game_page->state->castling), 200, 250, 30, WHITE);
+    DrawText(TextFormat("En passant target: %d",
+      game_page->state->en_passant_index), 200, 300, 30, WHITE);
+    DrawText(TextFormat("Halfm. clock: %d",
+      game_page->state->halfmove_clock), 200, 350, 30, WHITE);
+    DrawText(TextFormat("Fullm. clock: %d",
+      game_page->state->fullmove_clock), 200, 400, 30, WHITE);
   }
 }
