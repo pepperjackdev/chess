@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stdlib.h>
 #include <stdint.h>
 
 #include "chess/state.h"
+#include "chess/utils/tuple.h"
 
 typedef enum : uint8_t {
   PIECE_MOVE_IS_REVERSIBLE            = 0b1 << 0,
@@ -12,12 +12,13 @@ typedef enum : uint8_t {
   PIECE_MOVE_IS_EN_PASSANT            = 0b1 << 3,
   PIECE_MOVE_DISABLES_CASTLING_KING   = 0b1 << 4,
   PIECE_MOVE_DISABLES_CASTLING_QUEEN  = 0b1 << 5,
-  PIECE_MOVE_IMPLIES_PROMOTION        = 0b1 << 6
+  PIECE_MOVE_IS_CASTLING              = 0b1 << 6,
+  PIECE_MOVE_IMPLIES_PROMOTION        = 0b1 << 7
 } PieceMoveFlags;
 
 typedef struct {
-  size_t from;
-  size_t to;
+  Tuple2 from;
+  Tuple2 to;
   PieceMoveFlags flags;
 } PieceMove;
 

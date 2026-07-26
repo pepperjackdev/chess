@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 bool compare_piece_move(PieceMove m1, PieceMove m2) {
-    return m1.from == m2.from && m1.to == m2.to;
+    return t2cmp(m1.from, m2.from) && t2cmp(m1.to, m2.to);
 }
 
 PieceMoveFlags compute_dynamic_piece_move_flags(PieceMove piece_move, State *state) {
@@ -22,7 +22,7 @@ PieceMoveFlags compute_dynamic_piece_move_flags(PieceMove piece_move, State *sta
     else flags |= PIECE_MOVE_IS_REVERSIBLE;
     
     if (piece_get_type(moving) == PIECE_TYPE_PAWN && 
-        abs(t2sub(itot2(piece_move.to), itot2(piece_move.from)).y) == 2) 
+        abs(t2sub(piece_move.to, piece_move.from).y) == 2) 
     {
         flags |= PIECE_MOVE_ENABLES_EN_PASSANT;    
     }
@@ -30,14 +30,18 @@ PieceMoveFlags compute_dynamic_piece_move_flags(PieceMove piece_move, State *sta
     return flags;
 }
 
-void make_piece_move(PieceMove move, State *state) {
+void make_piece_translation(PieceMove move, State *state) {
     Piece moving = placement_get_piece(&state->placement, move.from) | PIECE_FLAG_MOVED;
-    PieceMoveFlags flags = move.flags | compute_dynamic_piece_move_flags(move, state);
-
     placement_set_piece(&state->placement, move.from, NULL_PIECE);
     placement_set_piece(&state->placement, move.to, moving);
+}
 
-    state->en_passant_index = -1;
+void make_piece_move(PieceMove move, State *state) {
+    PieceMoveFlags flags = move.flags | compute_dynamic_piece_move_flags(move, state);
+    Piece moving = placement_get_piece(&state->placement, move.from) | PIECE_FLAG_MOVED;
+    make_piece_translation(move, state);
+
+    state->enpassant = t2(-1, -1);
 
     if (flags & PIECE_MOVE_IS_REVERSIBLE) state->halfmove_clock += 1;
     if (flags & PIECE_MOVE_IS_NOT_REVERSIBLE) {
@@ -46,25 +50,37 @@ void make_piece_move(PieceMove move, State *state) {
     }
     
     if (flags & PIECE_MOVE_ENABLES_EN_PASSANT) {
-        state->en_passant_index = t2toi(t2sub(itot2(move.to), 
+        state->enpassant = t2sub(move.to, 
             t2scale(((Tuple2){0, 1}), piece_get_side(moving) == PIECE_SIDE_WHITE ? -1 : 1)
-        ));
+        );
     }
 
     if (flags & PIECE_MOVE_IS_EN_PASSANT) {
         placement_set_piece(&state->placement, 
-            t2toi(t2sub(itot2(move.to),t2scale(((Tuple2){0, 1}), piece_get_side(moving) == PIECE_SIDE_WHITE ? -1 : 1))), 
+            t2sub(move.to,t2scale(((Tuple2){0, 1}), piece_get_side(moving) == PIECE_SIDE_WHITE ? -1 : 1)), 
             NULL_PIECE);
     }
 
     if (flags & PIECE_MOVE_DISABLES_CASTLING_KING) {
-        state->castling &= state->castling ^ (state->active_side == PIECE_SIDE_WHITE) ? 
-            CASTLING_WHITE_KING_SIDE : CASTLING_BLACK_KING_SIDE;
+        state->castling &= 0b11111111 ^ ((state->active_side == PIECE_SIDE_WHITE) ? 
+            CASTLING_WHITE_KING_SIDE : CASTLING_BLACK_KING_SIDE);
     }
 
     if (flags & PIECE_MOVE_DISABLES_CASTLING_QUEEN) {
-        state->castling &= state->castling ^ (state->active_side == PIECE_SIDE_WHITE) ? 
-            CASTLING_WHITE_QUEEN_SIDE : CASTLING_BLACK_QUEEN_SIDE;
+        state->castling &= 0b11111111 ^ ((state->active_side == PIECE_SIDE_WHITE) ? 
+            CASTLING_WHITE_QUEEN_SIDE : CASTLING_BLACK_QUEEN_SIDE);
+    }
+
+    if (flags & PIECE_MOVE_IS_CASTLING) {
+        Tuple2 rook_from, rook_to;
+        if (move.from.x < move.to.x) { 
+            rook_from = (state->active_side == PIECE_SIDE_WHITE) ? t2(7, 7) : t2(7, 0);
+            rook_to = t2add(move.to, t2(-1, 0));
+        } else {
+            rook_from = (state->active_side == PIECE_SIDE_WHITE) ? t2(0, 7) : t2(0, 0);
+            rook_to = t2add(move.to, t2(1, 0));            
+        }
+        make_piece_translation((PieceMove){rook_from, rook_to}, state);
     }
 
     if (flags & PIECE_MOVE_IMPLIES_PROMOTION) {

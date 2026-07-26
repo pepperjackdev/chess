@@ -16,7 +16,8 @@ int main() {
 
   State state;
   parse_fen_into_state(
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",  
+    // "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
     &state
   );
 

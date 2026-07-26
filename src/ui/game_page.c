@@ -12,24 +12,25 @@
 void update_game_page(GamePage *game_page) {
   int col = GetMouseX() / (GetScreenWidth() / 8);
   int row = GetMouseY() / (GetScreenHeight() / 8);
+  Tuple2 position = t2(col, row);
   
   if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-    if (placement_get_piece(&game_page->state->placement, row * 8 + col) != 0) {
-      game_page->move_source_index = row * 8 + col;
+    if (placement_get_piece(&game_page->state->placement, position) != NULL_PIECE) {
+      game_page->move_source = position;
     }
   }
 
   if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-    if (game_page->move_source_index == NOT_DRAGGING) return;
+    if (t2cmp(game_page->move_source, NOT_DRAGGING)) return;
     submit_move(
       (Move){
         game_page->state->active_side,
         PIECE_MOVE, 
-        (PieceMove){game_page->move_source_index, row * 8 + col}
+        (PieceMove){game_page->move_source, position}
       },
       game_page->state
     );
-    game_page->move_source_index = NOT_DRAGGING;
+    game_page->move_source = NOT_DRAGGING;
   }
 }
 
@@ -53,11 +54,13 @@ void render_game_page(GamePage *game_page) {
 
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
+      Tuple2 position = t2(col, row);
+
       bool red_flag = false;
-      if (game_page->move_source_index != NOT_DRAGGING) {
+      if (!t2cmp(game_page->move_source, NOT_DRAGGING)) {
         for (int i = 0; i < move_list_count; i++) {
-          if (move_list[i].to == t2toi((Tuple2){col, row}) && 
-            move_list[i].from == game_page->move_source_index) {
+          if (t2cmp(move_list[i].to, position) && 
+            t2cmp(move_list[i].from, game_page->move_source)) {
             red_flag = true;
           }
         }
@@ -82,7 +85,7 @@ void render_game_page(GamePage *game_page) {
       );
 
       // Pieces
-      Piece piece = placement_get_piece(&game_page->state->placement, row * 8 + col);
+      Piece piece = placement_get_piece(&game_page->state->placement, position);
       if (piece == 0) continue;
       DrawTexturePro(
         *game_page->sprite, 
@@ -95,19 +98,19 @@ void render_game_page(GamePage *game_page) {
         },
         (Vector2){0, 0}, 
         0.0f, 
-        game_page->move_source_index != (row * 8 + col) ? 
+        !t2cmp(game_page->move_source, position) ? 
           RAYWHITE : (Color){0xA0, 0xA0, 0xA0, 0x80} 
       );
     }
   }
 
   // Drawing pieces over the board
-  if (game_page->move_source_index != NOT_DRAGGING) {
+  if (!t2cmp(game_page->move_source, NOT_DRAGGING)) {
     DrawTexturePro(
       *game_page->sprite, 
       get_piece_sprite(placement_get_piece(
         &game_page->state->placement, 
-        game_page->move_source_index)
+        game_page->move_source)
       ),
       (Rectangle){
         GetMouseX() - squareWidth / 2,
@@ -123,13 +126,13 @@ void render_game_page(GamePage *game_page) {
 
   // State Info
   if (IsKeyDown(KEY_LEFT_SHIFT)) {
-    DrawRectangle(100, 100, 760, 760, GRAY);
+    DrawRectangle(100, 100, 760, 760, (Color){130, 130, 130, 100});
     DrawText(TextFormat("Active color: %s", 
       game_page->state->active_side == PIECE_SIDE_WHITE ? "white" : "black"), 200, 200, 30, WHITE);
     DrawText(TextFormat("Castling: %b",
       game_page->state->castling), 200, 250, 30, WHITE);
     DrawText(TextFormat("En passant target: %d",
-      game_page->state->en_passant_index), 200, 300, 30, WHITE);
+      game_page->state->enpassant), 200, 300, 30, WHITE);
     DrawText(TextFormat("Halfm. clock: %d",
       game_page->state->halfmove_clock), 200, 350, 30, WHITE);
     DrawText(TextFormat("Fullm. clock: %d",

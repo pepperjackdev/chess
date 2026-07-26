@@ -11,8 +11,6 @@
 ConditionFlag compute_conditions(
     State *state, 
     PieceMove piece_move,
-    PieceMove const *move_list,
-    int move_list_count,
     ConditionFlag to_compute
 ) {
     ConditionFlag conditions = 0;
@@ -21,12 +19,28 @@ ConditionFlag compute_conditions(
     if (to_compute & SQUARE_EMPTY && target_piece == NULL_PIECE) conditions |= SQUARE_EMPTY;
     if (to_compute & SQUARE_ENEMY && target_piece != NULL_PIECE && piece_get_side(target_piece) != state->active_side) conditions |= SQUARE_ENEMY;
     if (to_compute & SQUARE_NOT_ALLY && target_piece == NULL_PIECE || piece_get_side(target_piece) != state->active_side) conditions |= SQUARE_NOT_ALLY;
-    if (to_compute & SQUARE_EN_PASSANT && piece_move.to == state->en_passant_index) conditions |= SQUARE_EN_PASSANT;
+    if (to_compute & SQUARE_EN_PASSANT && t2cmp(piece_move.to, state->enpassant)) conditions |= SQUARE_EN_PASSANT;
     if (to_compute & PIECE_NEVER_MOVED && moving_piece != NULL_PIECE && !(moving_piece & PIECE_FLAG_MOVED)) conditions |= PIECE_NEVER_MOVED;
-    if (to_compute & CASTLING_KING_SIDE_ALLOWED && state->castling & (CASTLING_BLACK_KING_SIDE | CASTLING_WHITE_KING_SIDE)) conditions |= CASTLING_KING_SIDE_ALLOWED;
-    if (to_compute & CASTLING_QUEEN_SIDE_ALLOWED && state->castling & (CASTLING_BLACK_KING_SIDE | CASTLING_WHITE_KING_SIDE)) conditions |= CASTLING_QUEEN_SIDE_ALLOWED;
+    if (to_compute & CASTLING_KING_SIDE_ALLOWED && state->castling & ((state->active_side == PIECE_SIDE_WHITE) ? CASTLING_WHITE_KING_SIDE : CASTLING_BLACK_KING_SIDE)) conditions |= CASTLING_KING_SIDE_ALLOWED;
+    if (to_compute & CASTLING_QUEEN_SIDE_ALLOWED && state->castling & ((state->active_side == PIECE_SIDE_WHITE) ? CASTLING_WHITE_QUEEN_SIDE : CASTLING_BLACK_QUEEN_SIDE)) conditions |= CASTLING_QUEEN_SIDE_ALLOWED;
     if (to_compute & CASTLING_PATH_IS_CLEAR) {
-        // Continue from here
+        bool path_is_clear = true;
+        
+        if (conditions & CASTLING_KING_SIDE_ALLOWED) {
+            for (int i = 1; i <= 2 && path_is_clear; i++) {
+                Tuple2 position = t2add(piece_move.from, t2(1 * i, 0));
+                if (placement_get_piece(&state->placement, position) != NULL_PIECE) path_is_clear = false;
+                // TODO: check if position is targeted!
+            }
+        } else if (conditions & CASTLING_QUEEN_SIDE_ALLOWED) {
+            for (int i = 1; i <= 3 && path_is_clear; i++) {
+                Tuple2 position = t2add(piece_move.from, t2(-1 * i, 0));
+                if (placement_get_piece(&state->placement, position) != NULL_PIECE) path_is_clear = false;
+                // TODO: check if position is targeted!
+            }
+        }
+
+        if (path_is_clear) conditions |= CASTLING_PATH_IS_CLEAR;
     }
     return conditions;
 }
@@ -35,11 +49,9 @@ ConditionFlag compute_conditions(
 bool evaluate_conditions(
     State *state, 
     PieceMove piece_move,
-    PieceMove const *move_list,
-    int move_list_count,
     ConditionFlag conditions
 ) {
-    return (conditions & compute_conditions(state, piece_move, move_list, move_list_count, conditions)) == conditions;
+    return (conditions & compute_conditions(state, piece_move, conditions)) == conditions;
 }
 
 const size_t STANDARD_DIRECTIONS_COUNT = 16;
@@ -81,23 +93,23 @@ void generate_pseudo_legal_piece_moves(
     State *state, 
     PieceMove *move_list,
     int *move_list_count,
-    int index) 
+    Tuple2 position) 
 {
-    Piece piece = placement_get_piece(&state->placement, index);
+    Piece piece = placement_get_piece(&state->placement, position);
     PatternSet set = get_piece_pattern_set(piece_get_type(piece));
     for (int j = 0; j < set.count; j++) {
         Pattern pattern = set.patterns[j];
         for (int k = 0; k < STANDARD_DIRECTIONS_COUNT; k++) {
             if (!((0b1 << k) & pattern.directions)) continue;
             Direction direction = STANDARD_DIRECTIONS[k];
-            Tuple2 target = itot2(index);
+            Tuple2 target = position;
             for (int s = 1; s <= pattern.steps | pattern.steps == PATTERN_STEPS_UNLIMITED; s++) {
                 int direction_coefficient = (piece_get_side(piece) == PIECE_SIDE_BLACK) ? 1 : -1;
                 target = t2add(target, t2scale(direction, 
                     pattern.squares_per_step * direction_coefficient));
                 if (!t2range((Tuple2){0, 0}, target, (Tuple2){7, 7})) break;
-                PieceMove piece_move = {index, t2toi(target), pattern.piece_move_static_flags};
-                if (!evaluate_conditions(state, piece_move, move_list, *move_list_count, pattern.conditions)) break;
+                PieceMove piece_move = {position, target, pattern.piece_move_static_flags};
+                if (!evaluate_conditions(state, piece_move, pattern.conditions)) break;
                 move_list[(*move_list_count)++] = piece_move;
                 if (placement_get_piece(&state->placement, piece_move.to) != NULL_PIECE) break;
             }
@@ -109,12 +121,12 @@ int generate_pseudo_legal_moves(State *state, PieceMove *move_list) {
     int move_list_count = 0;
     int king_index = 0;
     for (int i = 0; i < 64; i++) {
-        Piece piece = placement_get_piece(&state->placement, i);
+        Piece piece = placement_get_piece(&state->placement, itot2(i));
         if (piece == NULL_PIECE || piece_get_side(piece) != state->active_side) continue;
         if (piece == piece_new(PIECE_TYPE_KING, state->active_side)) { king_index = i; continue; }
-        generate_pseudo_legal_piece_moves(state, move_list, &move_list_count, i);
+        generate_pseudo_legal_piece_moves(state, move_list, &move_list_count, itot2(i));
     }
-    generate_pseudo_legal_piece_moves(state, move_list, &move_list_count, king_index);
+    generate_pseudo_legal_piece_moves(state, move_list, &move_list_count, itot2(king_index));
     return move_list_count;
 }
 

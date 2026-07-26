@@ -1,5 +1,13 @@
 #include "chess/utils/tuple.h"
 
+Tuple2 t2(int x, int y) {
+    return (Tuple2){x, y};
+}
+
+bool t2cmp(Tuple2 t1, Tuple2 t2) {
+    return t1.x == t2.x && t1.y == t2.y;
+}
+
 Tuple2 itot2(int index) {
     return (Tuple2){index % 8, index / 8};
 }
