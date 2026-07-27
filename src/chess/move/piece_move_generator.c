@@ -27,16 +27,16 @@ ConditionFlag compute_conditions(
         bool path_is_clear = true;
         
         if (conditions & CASTLING_KING_SIDE_ALLOWED) {
-            for (int i = 1; i <= 2 && path_is_clear; i++) {
-                Tuple2 position = t2add(piece_move.from, t2(1 * i, 0));
+            for (int i = 1; i <= 2; i++) {
+                Tuple2 position = t2add(piece_move.from, t2(i, 0));
                 if (placement_get_piece(&state->placement, position) != NULL_PIECE) path_is_clear = false;
-                // TODO: check if position is targeted!
             }
-        } else if (conditions & CASTLING_QUEEN_SIDE_ALLOWED) {
-            for (int i = 1; i <= 3 && path_is_clear; i++) {
-                Tuple2 position = t2add(piece_move.from, t2(-1 * i, 0));
+        }
+
+        if (conditions & CASTLING_QUEEN_SIDE_ALLOWED) {
+            for (int i = 1; i <= 3; i++) {
+                Tuple2 position = t2sub(piece_move.from, t2(i, 0));
                 if (placement_get_piece(&state->placement, position) != NULL_PIECE) path_is_clear = false;
-                // TODO: check if position is targeted!
             }
         }
 
@@ -104,7 +104,8 @@ void generate_pseudo_legal_piece_moves(
             Direction direction = STANDARD_DIRECTIONS[k];
             Tuple2 target = position;
             for (int s = 1; s <= pattern.steps | pattern.steps == PATTERN_STEPS_UNLIMITED; s++) {
-                int direction_coefficient = (piece_get_side(piece) == PIECE_SIDE_BLACK) ? 1 : -1;
+                int direction_coefficient = (pattern.is_direction_relative &&
+                    piece_get_side(piece) == PIECE_SIDE_BLACK) ? 1 : -1;
                 target = t2add(target, t2scale(direction, 
                     pattern.squares_per_step * direction_coefficient));
                 if (!t2range((Tuple2){0, 0}, target, (Tuple2){7, 7})) break;

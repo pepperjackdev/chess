@@ -39,11 +39,12 @@ typedef enum : uint8_t {
     PIECE_NEVER_MOVED           = 0b1 << 4,
     CASTLING_KING_SIDE_ALLOWED  = 0b1 << 5,
     CASTLING_QUEEN_SIDE_ALLOWED = 0b1 << 6,
-    CASTLING_PATH_IS_CLEAR               = 0b1 << 7
+    CASTLING_PATH_IS_CLEAR      = 0b1 << 7
 } ConditionFlag;
 
 typedef struct {
     DirectionFlag directions;
+    bool is_direction_relative;
     int squares_per_step;
     int steps;
     ConditionFlag conditions;

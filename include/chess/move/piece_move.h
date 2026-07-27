@@ -5,15 +5,16 @@
 #include "chess/state.h"
 #include "chess/utils/tuple.h"
 
-typedef enum : uint8_t {
+typedef enum : uint16_t {
   PIECE_MOVE_IS_REVERSIBLE            = 0b1 << 0,
   PIECE_MOVE_IS_NOT_REVERSIBLE        = 0b1 << 1,
   PIECE_MOVE_ENABLES_EN_PASSANT       = 0b1 << 2,
   PIECE_MOVE_IS_EN_PASSANT            = 0b1 << 3,
   PIECE_MOVE_DISABLES_CASTLING_KING   = 0b1 << 4,
   PIECE_MOVE_DISABLES_CASTLING_QUEEN  = 0b1 << 5,
-  PIECE_MOVE_IS_CASTLING              = 0b1 << 6,
-  PIECE_MOVE_IMPLIES_PROMOTION        = 0b1 << 7
+  PIECE_MOVE_IS_CASTLING_KING_SIDE    = 0b1 << 6,
+  PIECE_MOVE_IS_CASTLING_QUEEN_SIDE   = 0b1 << 7,
+  PIECE_MOVE_IMPLIES_PROMOTION        = 0b1 << 8
 } PieceMoveFlags;
 
 typedef struct {

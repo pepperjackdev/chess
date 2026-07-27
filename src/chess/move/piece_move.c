@@ -71,16 +71,20 @@ void make_piece_move(PieceMove move, State *state) {
             CASTLING_WHITE_QUEEN_SIDE : CASTLING_BLACK_QUEEN_SIDE);
     }
 
-    if (flags & PIECE_MOVE_IS_CASTLING) {
-        Tuple2 rook_from, rook_to;
-        if (move.from.x < move.to.x) { 
-            rook_from = (state->active_side == PIECE_SIDE_WHITE) ? t2(7, 7) : t2(7, 0);
-            rook_to = t2add(move.to, t2(-1, 0));
-        } else {
-            rook_from = (state->active_side == PIECE_SIDE_WHITE) ? t2(0, 7) : t2(0, 0);
-            rook_to = t2add(move.to, t2(1, 0));            
-        }
-        make_piece_translation((PieceMove){rook_from, rook_to}, state);
+    if (flags & PIECE_MOVE_IS_CASTLING_KING_SIDE) {
+        int row = state->active_side == PIECE_SIDE_WHITE ? 7 : 0;
+        PieceMove rook_move = {
+            t2(7, row),
+            t2sub(move.to, t2(1, 0))
+        };
+    }
+
+    if (flags & PIECE_MOVE_IS_CASTLING_QUEEN_SIDE) {
+        int row = state->active_side == PIECE_SIDE_WHITE ? 7 : 0;
+        PieceMove rook_move = {
+            t2(0, row),
+            t2add(move.to, t2(1, 0))
+        };
     }
 
     if (flags & PIECE_MOVE_IMPLIES_PROMOTION) {
